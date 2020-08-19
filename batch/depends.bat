@@ -1,2 +1,2 @@
-exec java -jar depends.jar %*
+java -jar depends.jar %*
 

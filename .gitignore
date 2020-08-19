@@ -11,6 +11,13 @@ data/
 .project
 .settings/
 META-INF/
-result/
+output/
 java_design_pattern_test/
 lang
+gen
+.gradle
+#libs
+*.iml
+local.properties
+project.properties
+settings.gradle

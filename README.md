@@ -8,6 +8,28 @@ We believe that dependency analysis of software source code is one of the most i
 
 *Depends* is open source and free, to promote community collaboration, to avoid repetitive work, and to improve the quality of analytical tools.
 
+# Build tips
+
+## Create New Gradle Builds
+
+Create a build:
+
+```shell
+gradle init
+```
+
+Then include [utils](https://github.com/multilang-depends/utils) and [jruby-parser](https://github.com/jruby/jruby-parser) in the `/src/main/java/`, and resolve all the other dependencies.
+
+## Generate ANTLR Recognizer
+
+ANTLR is distributed as a Java Jar file It can be downloaded [here](https://www.antlr.org/download.html).Under the same directory of your antlr jar file, run the following from the command line:
+
+```shell
+java -jar antlr-4.8-complete.jar yourLanguageGrammar.g4 -visitor
+```
+
+After all the java recognizer is generated, copy them to the extractor/language folder respectively.
+
 # How to use *Depends*
 
 ## Download and installation
@@ -112,29 +134,6 @@ The effort needed for each language varies a lot. We spent 24 hours to support M
 
 Parsing source files is not trivial. There are many language-specific features that need to be taken into consideration. Reporting unsupported language features or fixing existing issues will make *Depends* better. 
 
-## Create useful tools
-
-You could use *Depends* as building blocks to create various tools, either open source or commercial, for productions or research, such as GUI tools, code visualization tools, etc.
-
-## Become a sponsor
-
-It will help us a great deal if your company or institute becomes a sponsor of our project. Your donation could help *Depends* to be independent, sustainable, and support more contributors.
-
-# Tell us your thoughts
-
-You are welcome to use "Depends" in your projects, either open source or commercial ones, as well as software engineering research. Your feedback is highly appreciated.  We will also be thankful if you could help us spread the words and encourage more people to use it.
-
 # Acknowledgement
 
-This project is built upon the excellent work of other researchers, including the ENRE framework (https://github.com/jinwuxia/ENRE) proposed by Jin Wuxia et al., and the architecture research from Prof. Yuanfang Cai 's team (https://www.cs.drexel.edu/~yfcai/) on dependency analysis.
-
-The language specific front-end of *Depends* is built upon several excellent open source projects, including Antlr/Antlr Grammar V4 (https://github.com/antlr), Eclipse CDT (www.eclipse.org/cdt), and JRuby(https://github.com/jruby/jruby).
-
-# Authors
- - Gang ZHANG (https://github.com/gangz)
- - Jin Wuxia (https://github.com/jinwuxia)
-
-# Sponsors
- - ArchDia LLC. (www.archdia.com)
- - Emergent Design Inc.(www.emergentdesign.cn)
-
+This project is built upon the excellent work of [multilang-depends](https://github.com/multilang-depends) projects.
