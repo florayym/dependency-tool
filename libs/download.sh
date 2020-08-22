@@ -41,3 +41,11 @@ wget https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotatio
 wget https://repo1.maven.org/maven2/org/antlr/antlr4-maven-plugin/4.7.2/antlr4-maven-plugin-4.7.2.jar
 
 wget https://repo1.maven.org/maven2/junit/junit/4.12/junit-4.12.jar
+
+wget https://repo1.maven.org/maven2/org/eclipse/platform/org.eclipse.core.jobs/3.10.500/org.eclipse.core.jobs-3.10.500.jar
+
+wget https://repo1.maven.org/maven2/org/eclipse/platform/org.eclipse.equinox.registry/3.8.500/org.eclipse.equinox.registry-3.8.500.jar
+
+wget https://repo1.maven.org/maven2/org/eclipse/platform/org.eclipse.equinox.preferences/3.7.500/org.eclipse.equinox.preferences-3.7.500.jar
+
+wget https://repo1.maven.org/maven2/org/eclipse/platform/org.eclipse.equinox.common/3.10.500/org.eclipse.equinox.common-3.10.500.jar

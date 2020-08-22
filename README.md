@@ -32,6 +32,14 @@ After all the java recognizer is generated, copy them to the extractor/language 
 
 # How to use *Depends*
 
+## Run with DevEco Studio
+
+Program arguments:
+
+```shell
+java D:\test analyzed -d gui\result -f js
+```
+
 ## Download and installation
 
 You could download the latest version of *Depends* from https://github.com/multilang-depends/depends/releases/,  
