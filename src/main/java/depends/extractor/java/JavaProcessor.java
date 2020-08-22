@@ -66,7 +66,7 @@ public class JavaProcessor extends AbstractLangProcessor {
 	}
 	
 	@Override
-	public List<String> supportedRelations() {
+	public List<String> supportedRelations() { // NOTE all java support dependency relationships, 13 in total
 		ArrayList<String> depedencyTypes = new ArrayList<>();
 		depedencyTypes.add(IMPORT);
 		depedencyTypes.add(CONTAIN);

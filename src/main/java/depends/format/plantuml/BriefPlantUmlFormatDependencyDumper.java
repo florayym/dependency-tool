@@ -17,8 +17,8 @@ public class BriefPlantUmlFormatDependencyDumper extends AbstractFormatDependenc
 		return "briefplantuml";
 	}
 	
-	public BriefPlantUmlFormatDependencyDumper(DependencyMatrix dependencyMatrix, String projectName, String outputDir) {
-		super(dependencyMatrix,projectName,outputDir);
+	public BriefPlantUmlFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String projectName, String outputDir) {
+		super(dependencyMatrix, inputDir, projectName, outputDir);
 	}
 
 

@@ -38,8 +38,8 @@ public class JsonFormatDependencyDumper extends AbstractFormatDependencyDumper {
 		return "json";
 	}
 
-	public JsonFormatDependencyDumper(DependencyMatrix dependencyMatrix, String projectName, String outputDir) {
-		super(dependencyMatrix, projectName,outputDir);
+	public JsonFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String projectName, String outputDir) {
+		super(dependencyMatrix, inputDir, projectName, outputDir);
 	}
 
 	@Override

@@ -41,8 +41,8 @@ public class DetailTextFormatDependencyDumper extends AbstractFormatDependencyDu
 	public String getFormatName() {
 		return "detail";
 	}
-	public DetailTextFormatDependencyDumper(DependencyMatrix matrix, String name, String outputDir) {
-		super(matrix,name,outputDir);
+	public DetailTextFormatDependencyDumper(DependencyMatrix matrix, String inputDir, String name, String outputDir) {
+		super(matrix, inputDir, name, outputDir);
 	}
 	@Override
 	public boolean output() {

@@ -37,7 +37,7 @@ import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
 
-public class JavaImportLookupStrategy implements ImportLookupStrategy{
+public class JavaImportLookupStrategy implements ImportLookupStrategy{ // doc/developer_guide_CN.md:66
 	@Override
 	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, Inferer inferer) {
 		//Java Strategy

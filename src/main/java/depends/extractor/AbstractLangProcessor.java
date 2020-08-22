@@ -106,11 +106,13 @@ abstract public class AbstractLangProcessor {
 	 * The process steps of build dependencies. Step 1: parse all files, add
 	 * entities and expression into repositories Step 2: resolve bindings of files
 	 * (if not resolved yet) Step 3: identify dependencies
-	 * 
-	 * @param includeDir
+	 *
 	 * @param inputDir
-	 * @param b 
-	 * @param b 
+	 * @param includeDir
+	 * @param typeFilter
+	 * @param callAsImpl
+	 * @param isCollectUnsolvedBindings
+	 * @param isDuckTypingDeduce
 	 */
 	public void buildDependencies(String inputDir, String[] includeDir, List<String> typeFilter, boolean callAsImpl, boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce) {
 		this.inputSrcPath = inputDir;
@@ -167,7 +169,7 @@ abstract public class AbstractLangProcessor {
 		entityRepo = null;
 		System.out.println("reorder dependency matrix...");
 		dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
-		System.out.println("Dependencie data generating done successfully...");
+		System.out.println("Dependency data generating done successfully...");
 	}
 
 	private final void parseAllFiles() {

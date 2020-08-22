@@ -31,6 +31,7 @@ import depends.format.dot.DotFormatDependencyDumper;
 import depends.format.dot.DotFullnameDependencyDumper;
 import depends.format.excel.ExcelXlsFormatDependencyDumper;
 import depends.format.excel.ExcelXlsxFormatDependencyDumper;
+import depends.format.javascript.JavaScriptFormatDependencyDumper;
 import depends.format.json.JsonFormatDependencyDumper;
 import depends.format.plantuml.BriefPlantUmlFormatDependencyDumper;
 import depends.format.plantuml.PlantUmlFormatDependencyDumper;
@@ -46,25 +47,26 @@ public class DependencyDumper {
 		this.dependencyMatrix = dependencies;
 	}
 	
-	public void outputResult(String projectName, String outputDir, String[] outputFormat) {
-        outputDeps(projectName,outputDir,outputFormat);
+	public void outputResult(String inputDir, String projectName, String outputDir, String[] outputFormat) {
+        outputDeps(inputDir, projectName, outputDir, outputFormat);
 	}
 	
-	private final void outputDeps(String projectName, String outputDir, String[] outputFormat) {
+	private final void outputDeps(String inputDir, String projectName, String outputDir, String[] outputFormat) {
 		@SuppressWarnings("unchecked")
 		List<String> formatList = Arrays.asList(outputFormat);
 		AbstractFormatDependencyDumper[] builders = new AbstractFormatDependencyDumper[] {
-		 	new DetailTextFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
-		 	new XmlFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
-		 	new JsonFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
-		 	new ExcelXlsFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
-		 	new ExcelXlsxFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
-		 	new DotFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
-		 	new DotFullnameDependencyDumper(dependencyMatrix,projectName,outputDir),
-		 	new PlantUmlFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
-		 	new BriefPlantUmlFormatDependencyDumper(dependencyMatrix,projectName,outputDir)
+		 	new DetailTextFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
+		 	new XmlFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
+		 	new JsonFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
+		 	new JavaScriptFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
+		 	new ExcelXlsFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
+		 	new ExcelXlsxFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
+		 	new DotFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
+		 	new DotFullnameDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
+		 	new PlantUmlFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
+		 	new BriefPlantUmlFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir)
 		};
-		for (AbstractFormatDependencyDumper builder:builders) {
+		for (AbstractFormatDependencyDumper builder : builders) {
 			if (formatList.contains(builder.getFormatName())){
 				builder.output();
 			}

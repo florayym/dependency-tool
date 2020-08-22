@@ -30,11 +30,13 @@ import depends.matrix.core.DependencyMatrix;
 
 public abstract class AbstractFormatDependencyDumper {
 	protected String name;
+	protected String inputDir;
 	protected DependencyMatrix matrix;
 	protected String outputDir;
 
-	public AbstractFormatDependencyDumper(DependencyMatrix matrix, String projectName, String outputDir) {
+	public AbstractFormatDependencyDumper(DependencyMatrix matrix, String inputDir, String projectName, String outputDir) {
 		this.matrix = matrix;
+		this.inputDir = inputDir;
 		this.name = projectName;
 		this.outputDir = outputDir;
 	}
@@ -42,6 +44,6 @@ public abstract class AbstractFormatDependencyDumper {
 	public abstract boolean output();
 	public abstract String getFormatName();
 	protected String composeFilename() {
-		return outputDir+File.separator+name;
+		return outputDir + File.separator + name;
 	}
 }

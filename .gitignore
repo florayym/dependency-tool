@@ -3,7 +3,6 @@
 *.class
 *.log
 .idea/
-out/
 data/
 *.DS_Store
 /target/
@@ -11,13 +10,14 @@ data/
 .project
 .settings/
 META-INF/
-output/
 java_design_pattern_test/
 lang
-gen
 .gradle
+build
+gen
 #libs
 *.iml
+result
 local.properties
 project.properties
 settings.gradle

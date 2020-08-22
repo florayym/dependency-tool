@@ -91,8 +91,8 @@ public class Main {
 
 		inputDir = FileUtil.uniqFilePath(inputDir);
 		boolean supportImplLink = false;
-		if (app.getLang().equals("cpp") || app.getLang().equals("python")) supportImplLink = true;
-		
+		if (app.getLang().equals("cpp") || app.getLang().equals("python")) supportImplLink = true; // NOTE what is supportImplLink, why only cpp & python
+
 		if (app.isAutoInclude()) {
 			FolderCollector includePathCollector = new FolderCollector();
 			List<String> additionalIncludePaths = includePathCollector.getFolders(inputDir);
@@ -100,7 +100,7 @@ public class Main {
 			includeDir = additionalIncludePaths.toArray(new String[] {});
 		}
 			
-		AbstractLangProcessor langProcessor = LangProcessorRegistration.getRegistry().getProcessorOf(lang);
+		AbstractLangProcessor langProcessor = LangProcessorRegistration.getRegistry().getProcessorOf(lang); // NOTE this is the processor
 		if (langProcessor == null) {
 			System.err.println("Not support this language: " + lang);
 			return;
@@ -114,7 +114,7 @@ public class Main {
 		long startTime = System.currentTimeMillis();
 		
 		FilenameWritter filenameWritter = new EmptyFilenameWritter();
-		if (!StringUtils.isEmpty(app.getNamePathPattern())) {
+		if (!StringUtils.isEmpty(app.getNamePathPattern())) { // FIXME what does the dot mean?
 			if (app.getNamePathPattern().equals("dot")||
 					app.getNamePathPattern().equals(".")) {
 				filenameWritter = new DotPathFilenameWritter();
@@ -132,7 +132,7 @@ public class Main {
 		
 		/* by default use file dependency generator */
 		DependencyGenerator dependencyGenerator = new FileDependencyGenerator();
-		if (!StringUtils.isEmpty(app.getGranularity())) {
+		if (!StringUtils.isEmpty(app.getGranularity())) { // NOTE is this the only three types of src? A method, a single file, or a smali file?
 			/* method parameter means use method generator */
 			if (app.getGranularity().equals("method"))
 					dependencyGenerator = new FunctionDependencyGenerator();
@@ -156,7 +156,7 @@ public class Main {
 		dependencyGenerator.setFilenameRewritter(filenameWritter);
 		langProcessor.setDependencyGenerator(dependencyGenerator);
 		
-		langProcessor.buildDependencies(inputDir, includeDir,app.getTypeFilter(),supportImplLink,app.isOutputExternalDependencies(),app.isDuckTypingDeduce());
+		langProcessor.buildDependencies(inputDir, includeDir,app.getTypeFilter(),supportImplLink,app.isOutputExternalDependencies(),app.isDuckTypingDeduce()); // IMP key working
 		
 		
 		DependencyMatrix matrix = langProcessor.getDependencies();
@@ -165,7 +165,7 @@ public class Main {
 			matrix = new MatrixLevelReducer(matrix,app.getGranularity().substring(1)).shrinkToLevel();
 		}
 		DependencyDumper output = new DependencyDumper(matrix);
-		output.outputResult(outputName,outputDir,outputFormat);
+		output.outputResult(inputDir, outputName, outputDir, outputFormat);
 		if (app.isOutputExternalDependencies()) {
 			Set<UnsolvedBindings> unsolved = langProcessor.getExternalDependencies();
 	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved,app.getOutputName(),app.getOutputDir(),

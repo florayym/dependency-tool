@@ -51,8 +51,8 @@ public class DependsCommand {
     private String src;
 	@Parameters(index = "2",  description = "The output file name")
 	private String output;
-    @Option(names = {"-f", "--format"},split=",",  description = "the output format: [json(default),xml,excel,detail,dot,plantuml]")
-    private String[] format=new String[]{"json"};
+    @Option(names = {"-f", "--format"},split=",",  description = "the output format: [js(default)|json|xml|excel|detail|dot|plantuml]")
+    private String[] format=new String[]{"js"};
 	@Option(names = {"-d", "--dir"},  description = "The output directory")
 	private String dir;
 	@Option(names = {"-m", "--map"},  description = "Output DV8 dependency map file.")
@@ -69,7 +69,7 @@ public class DependsCommand {
 	@Option(names = {"-i","--includes"},split=",", description = "The files of searching path")
     private String[] includes = new String[] {};
 	@Option(names = {"--auto-include"},split=",", description = "auto include all paths under the source path (please notice the potential side effect)")
-	private boolean autoInclude = false;
+	private boolean autoInclude = false; // NOTE --auto-include for autoInclude (recursively)
 	@Option(names = {"--detail"},split=",", description = "add detail dependency information to output (only applicable for JSON output format)")
 	private boolean detail = false;	
 	@Option(names = {"--auto-stub"},split=",", description = "create stub files for unsolved symbols (exprimental feature, only for java)")

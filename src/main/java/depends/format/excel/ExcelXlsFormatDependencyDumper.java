@@ -45,8 +45,8 @@ public class ExcelXlsFormatDependencyDumper extends AbstractFormatDependencyDump
 	public String getFormatName() {
 		return "xls";
 	}
-	public ExcelXlsFormatDependencyDumper(DependencyMatrix dependencyMatrix, String projectName, String outputDir) {
-		super(dependencyMatrix, projectName,outputDir);
+	public ExcelXlsFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String projectName, String outputDir) {
+		super(dependencyMatrix, inputDir, projectName, outputDir);
 	}
 
 	@Override

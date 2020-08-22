@@ -38,8 +38,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
-import depends.extractor.java.JavaLexer;
-import depends.extractor.java.JavaParser;
 import depends.relations.Inferer;
 
 
