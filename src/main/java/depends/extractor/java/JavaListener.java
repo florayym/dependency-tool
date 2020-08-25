@@ -72,13 +72,17 @@ public class JavaListener extends JavaParserBaseListener {
 	private ExpressionUsage expressionUsage;
 	private EntityRepo entityRepo;
 
-	public JavaListener(String fileFullPath, EntityRepo entityRepo,Inferer inferer) {
-		this.context = new JavaHandlerContext(entityRepo,inferer);
+	public JavaListener(String fileFullPath, EntityRepo entityRepo, Inferer inferer) {
+		this.context = new JavaHandlerContext(entityRepo, inferer);
 		this.entityRepo = entityRepo;
 		annotationProcessor = new AnnotationProcessor();
-		expressionUsage = new ExpressionUsage(context,entityRepo);
+		expressionUsage = new ExpressionUsage(context, entityRepo);
 		context.startFile(fileFullPath);
 	}
+
+	////////////////////////
+	// context.found* add entity to entityRepo
+	////////////////////////
 
 	////////////////////////
 	// Package

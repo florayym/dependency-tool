@@ -44,49 +44,49 @@ public class FileDependencyGenerator extends DependencyGenerator{
 	@Override
 	public DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter) {
 		DependencyMatrix dependencyMatrix = new DependencyMatrix(typeFilter);
-		Iterator<Entity> iterator = entityRepo.entityIterator();
-		System.out.println("Start create dependencies matrix....");
+		Iterator<Entity> iterator = entityRepo.entityIterator(); // iterate allEntitiesById
+		System.out.println("Start creating dependency matrix....");
 		while(iterator.hasNext()) {
 			Entity entity = iterator.next();
 			if (!entity.inScope()) continue;
 			if (entity instanceof FileEntity){
 				String name = stripper.stripFilename(entity.getDisplayName());
 				name = filenameWritter.reWrite(name);
-        		dependencyMatrix.addNode(name,entity.getId());
+        		dependencyMatrix.addNode(name, entity.getId());
         	}
         	int fileEntityFrom = getFileEntityIdNoException(entityRepo, entity);
-        	if (fileEntityFrom==-1) continue;
-        	for (Relation relation:entity.getRelations()) {
+        	if (fileEntityFrom == -1) continue;
+        	for (Relation relation : entity.getRelations()) {
         		Entity relatedEntity = relation.getEntity();
-        		if (relatedEntity==null) continue;
+        		if (relatedEntity == null) continue;
         		if (relatedEntity instanceof CandidateTypes) {
         			List<TypeEntity> candidateTypes = ((CandidateTypes)relatedEntity).getCandidateTypes();
-        			for (TypeEntity candidateType:candidateTypes) {
-    	        		if (candidateType.getId()>=0) {
-    	        			int fileEntityTo = getFileEntityIdNoException(entityRepo,candidateType);
-    	        			if (fileEntityTo!=-1) {
-    	        				dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,1,buildDescription(entity,candidateType,relation.getFromLine()));
+        			for (TypeEntity candidateType : candidateTypes) {
+    	        		if (candidateType.getId() >= 0) {
+    	        			int fileEntityTo = getFileEntityIdNoException(entityRepo, candidateType);
+    	        			if (fileEntityTo != -1) {
+    	        				dependencyMatrix.addDependency(relation.getType(), fileEntityFrom, fileEntityTo,1, buildDescription(entity, candidateType, relation.getFromLine()));
     	        			}
     	        		}
         			}
-        		}else {
-	        		if (relatedEntity.getId()>=0) {
-	        			int fileEntityTo = getFileEntityIdNoException(entityRepo,relatedEntity);
-	        			if (fileEntityTo!=-1) {
-	        				dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,1,buildDescription(entity,relatedEntity,relation.getFromLine()));
+        		} else {
+	        		if (relatedEntity.getId() >= 0) {
+	        			int fileEntityTo = getFileEntityIdNoException(entityRepo, relatedEntity);
+	        			if (fileEntityTo != -1) {
+	        				dependencyMatrix.addDependency(relation.getType(), fileEntityFrom, fileEntityTo,1, buildDescription(entity, relatedEntity, relation.getFromLine()));
 	        			}
 	        		}
         		}
         	}
         }
-		System.out.println("Finish create dependencies matrix....");
+		System.out.println("Finish creating dependency matrix....");
 
 		return dependencyMatrix;
 	}
 
 	private int getFileEntityIdNoException(EntityRepo entityRepo, Entity entity) {
-		Entity ancestor = entity.getAncestorOfType(FileEntity.class);
-		if (ancestor==null) {
+		Entity ancestor = entity.getAncestorOfType(FileEntity.class); // IMP
+		if (ancestor == null) {
 			return -1;
 		}
 		if (!ancestor.inScope()) return -1;

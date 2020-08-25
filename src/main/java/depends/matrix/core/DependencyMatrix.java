@@ -68,18 +68,18 @@ public class DependencyMatrix {
 		relationCount+=weight;		
 	}
 	
-	public void addDependency(String depType, Integer from, Integer to,  int weight,DependencyDetail detail) {
-		if (typeFilter!=null && (!typeFilter.contains(depType)))
+	public void addDependency(String depType, Integer from, Integer to, int weight, DependencyDetail detail) {
+		if (typeFilter != null && !typeFilter.contains(depType))
 			return;
 		if(from.equals(to) || from == -1 || to == -1) {
 		    return;
 		}
-		if (dependencyPairs.get(DependencyPair.key(from,to))==null) {
-			dependencyPairs.put(DependencyPair.key(from,to),new DependencyPair(from,to));
+		if (dependencyPairs.get(DependencyPair.key(from, to)) == null) {
+			dependencyPairs.put(DependencyPair.key(from, to), new DependencyPair(from, to));
 		}
-		DependencyPair dependencyPair = dependencyPairs.get(DependencyPair.key(from,to));
-		dependencyPair.addDependency(depType,weight,detail);
-		relationCount+=weight;		
+		DependencyPair dependencyPair = dependencyPairs.get(DependencyPair.key(from, to));
+		dependencyPair.addDependency(depType, weight, detail);
+		relationCount += weight;
 	}
 	
     public ArrayList<String> getNodes() {

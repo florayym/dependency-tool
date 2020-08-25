@@ -37,12 +37,12 @@ import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
 
-public class JavaImportLookupStrategy implements ImportLookupStrategy{ // doc/developer_guide_CN.md:66
+public class JavaImportLookupStrategy implements ImportLookupStrategy {
 	@Override
 	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, Inferer inferer) {
 		//Java Strategy
 		String importedString = fileEntity.importedSuffixMatch(name);
-		if (importedString==null) return null;	
+		if (importedString == null) return null;
 		return repo.getEntity(importedString);
 	}
 
@@ -50,12 +50,12 @@ public class JavaImportLookupStrategy implements ImportLookupStrategy{ // doc/de
 	@Override
 	public List<Entity> getImportedRelationEntities(List<Import> importedList, EntityRepo repo) {
 		ArrayList<Entity> result = new ArrayList<>();
-		for (Import importedItem:importedList) {
+		for (Import importedItem : importedList) {
 			Entity imported = repo.getEntity(importedItem.getContent());
-			if (imported==null) continue;
+			if (imported == null) continue;
 			if (imported instanceof PackageEntity) { 
 				//ignore wildcard import relation
-			}else {
+			} else {
 				result.add(imported);
 			}
 		}
@@ -65,9 +65,9 @@ public class JavaImportLookupStrategy implements ImportLookupStrategy{ // doc/de
 	@Override
 	public List<Entity> getImportedTypes(List<Import> importedList, EntityRepo repo, Set<UnsolvedBindings> unsolvedBindings) {
 		ArrayList<Entity> result = new ArrayList<>();
-		for (Import importedItem:importedList) {
+		for (Import importedItem : importedList) {
 			Entity imported = repo.getEntity(importedItem.getContent());
-			if (imported==null) {
+			if (imported == null) {
 				unsolvedBindings.add(new UnsolvedBindings(importedItem.getContent(),null));
 				continue;
 			}
@@ -76,11 +76,11 @@ public class JavaImportLookupStrategy implements ImportLookupStrategy{ // doc/de
 				for (Entity child:imported.getChildren()) {
 					if (child instanceof FileEntity) {
 						child.getChildren().forEach(item->result.add(item));
-					}else {
+					} else {
 						result.add(child);
 					}
 				}
-			}else {
+			} else {
 				result.add(imported);
 			}
 		}

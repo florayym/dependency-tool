@@ -88,7 +88,7 @@ abstract public class AbstractLangProcessor {
 
 	public Inferer inferer;
 	protected EntityRepo entityRepo;
-	DependencyMatrix dependencyMatrix;
+	private DependencyMatrix dependencyMatrix;
 	protected String inputSrcPath;
 	public String[] includeDirs;
 	private DependencyGenerator dependencyGenerator;
@@ -121,8 +121,8 @@ abstract public class AbstractLangProcessor {
 		this.inferer.setCollectUnsolvedBindings(isCollectUnsolvedBindings);
 		this.inferer.setDuckTypingDeduce(isDuckTypingDeduce);
 		logger.info("Start parsing files...");
-		parseAllFiles();
-		markAllEntitiesScope();
+		parseAllFiles(); // IMP fill in entityRepo
+		markAllEntitiesScope(); // IMP ???
 		if (logger.isInfoEnabled()) {
 			logger.info("Resolve types and bindings of variables, methods and expressions.... " + this.inputSrcPath);
 			logger.info("Heap Information: " + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
@@ -132,8 +132,8 @@ abstract public class AbstractLangProcessor {
 			System.gc();
 			logger.info("Heap Information: " + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
 		}
-		identifyDependencies();
-		logger.info("Dependencie data generating done successfully...");
+		identifyDependencies(); // IMP extract wanted dependency relationships from entityRepo
+		logger.info("Dependency data generating done successfully...");
 	}
 
 	private void markAllEntitiesScope() {
@@ -164,7 +164,7 @@ abstract public class AbstractLangProcessor {
 	}
 
 	private void identifyDependencies() {
-		System.out.println("dependencie data generating...");
+		System.out.println("dependency data generating...");
 		dependencyMatrix = dependencyGenerator.build(entityRepo, typeFilter);
 		entityRepo = null;
 		System.out.println("reorder dependency matrix...");
@@ -175,7 +175,7 @@ abstract public class AbstractLangProcessor {
 	private final void parseAllFiles() {
 		System.out.println("Start parsing files...");
 		Set<String> phase2Files = new HashSet<>();
-		FileTraversal fileTransversal = new FileTraversal(new FileTraversal.IFileVisitor() {
+		FileTraversal fileTraversal = new FileTraversal(new FileTraversal.IFileVisitor() {
 			@Override
 			public void visit(File file) {
 				String fileFullPath = file.getAbsolutePath();
@@ -186,17 +186,17 @@ abstract public class AbstractLangProcessor {
 				if (isPhase2Files(fileFullPath)) {
 
 				} else {
-					parseFile(fileFullPath);
+					parseFile(fileFullPath); // IMP parse every file
 				}
 			}
 
 		});
-		fileTransversal.extensionFilter(this.fileSuffixes());
-		fileTransversal.travers(this.inputSrcPath);
+		fileTraversal.extensionFilter(this.fileSuffixes());
+		fileTraversal.travers(this.inputSrcPath);
 		for (String f : phase2Files) {
 			parseFile(f);
 		}
-		System.out.println("all files procceed successfully...");
+		System.out.println("all files processed successfully...");
 
 	}
 
@@ -208,7 +208,7 @@ abstract public class AbstractLangProcessor {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
-			System.err.println("error occoured during parse file " + fileFullPath);
+			System.err.println("error occurred during parse file " + fileFullPath);
 			e.printStackTrace();
 		}
 	}
@@ -218,14 +218,14 @@ abstract public class AbstractLangProcessor {
 	}
 
 	public List<String> includePaths() {
-		if (this.includePaths ==null) {
+		if (this.includePaths == null) {
 			this.includePaths = buildIncludePath();
 		}
 		return includePaths;
 	}
 
 	private List<String> buildIncludePath() {
-		includePaths = new ArrayList<String>();
+		includePaths = new ArrayList<>();
 		for (String path : includeDirs) {
 			if (FileUtils.fileExists(path)) {
 				path = FileUtil.uniqFilePath(path);

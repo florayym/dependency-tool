@@ -45,7 +45,7 @@ public class JavaFileParser implements depends.extractor.FileParser{
 	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private Inferer inferer;
-	public JavaFileParser(String fileFullPath,EntityRepo entityRepo, Inferer inferer) {
+	public JavaFileParser(String fileFullPath, EntityRepo entityRepo, Inferer inferer) {
         this.fileFullPath = fileFullPath;
         this.entityRepo = entityRepo;
         this.inferer = inferer;
@@ -60,7 +60,7 @@ public class JavaFileParser implements depends.extractor.FileParser{
         JavaParser parser = new JavaParser(tokens);
         ParserATNSimulator interpreter = new ParserATNSimulator(parser, parser.getATN(), parser.getInterpreter().decisionToDFA, new PredictionContextCache());
         parser.setInterpreter(interpreter);
-        JavaListener bridge = new JavaListener(fileFullPath, entityRepo,inferer);
+        JavaListener bridge = new JavaListener(fileFullPath, entityRepo, inferer); // traverse with listener pattern
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    try {
 	    	walker.walk(bridge, parser.compilationUnit());
@@ -69,7 +69,7 @@ public class JavaFileParser implements depends.extractor.FileParser{
 			interpreter.clearDFA();
 			bridge.done();
 	    	
-	    }catch (Exception e) {
+	    } catch (Exception e) {
 	    	System.err.println("error encountered during parse..." );
 	    	e.printStackTrace();
 	    }

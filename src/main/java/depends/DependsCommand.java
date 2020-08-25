@@ -51,36 +51,36 @@ public class DependsCommand {
     private String src;
 	@Parameters(index = "2",  description = "The output file name")
 	private String output;
-    @Option(names = {"-f", "--format"},split=",",  description = "the output format: [js(default)|json|xml|excel|detail|dot|plantuml]")
+    @Option(names = {"-f", "--format"},split=",", description = "the output format: [js(default)|json|xml|excel|detail|dot|plantuml]")
     private String[] format=new String[]{"js"};
 	@Option(names = {"-d", "--dir"},  description = "The output directory")
 	private String dir;
-	@Option(names = {"-m", "--map"},  description = "Output DV8 dependency map file.")
+	@Option(names = {"-m", "--map"}, description = "Output DV8 dependency map file.")
     private boolean dv8map = true;
-	@Option(names = {"-s", "--strip-leading-path"},  description = "Strip the leading path.")
+	@Option(names = {"-s", "--strip-leading-path"}, description = "Strip the leading path.")
     private boolean stripLeadingPath = false;
-	@Option(names = {"--strip-paths"}, split=",", description =  "The path(s) to be stripped. if -s enabled, the path(s) start after <src>. "
+	@Option(names = {"--strip-paths"}, split=",", description = "The path(s) to be stripped. if -s enabled, the path(s) start after <src>. "
 			+ "Otherwise, the path(s) should be valid.")
 	private String[] strippedPaths = new String[]{};
-	@Option(names = {"-g", "--granularity"},  description = "Granularity of dependency.[file(default),method,L#(the level of folder. e.g. L1=1st level folder)]")
+	@Option(names = {"-g", "--granularity"}, description = "Granularity of dependency.[file(default)|method|package|L#(the level of folder. e.g. L1=1st level folder)]")
     private String granularity="file";
-	@Option(names = {"-p", "--namepattern"},  description = "The name path pattern.[dot(.), unix(/) or windows(\\)")
+	@Option(names = {"-p", "--namepattern"}, description = "The name path pattern.[dot(.), unix(/) or windows(\\)")
     private String namePathPattern="";
-	@Option(names = {"-i","--includes"},split=",", description = "The files of searching path")
+	@Option(names = {"-i","--includes"}, split=",", description = "The files of searching path")
     private String[] includes = new String[] {};
-	@Option(names = {"--auto-include"},split=",", description = "auto include all paths under the source path (please notice the potential side effect)")
+	@Option(names = {"--auto-include"}, split=",", description = "auto include all paths under the source path (please notice the potential side effect)")
 	private boolean autoInclude = false; // NOTE --auto-include for autoInclude (recursively)
-	@Option(names = {"--detail"},split=",", description = "add detail dependency information to output (only applicable for JSON output format)")
+	@Option(names = {"--detail"}, split=",", description = "add detail dependency information to output (only applicable for JSON output format)")
 	private boolean detail = false;	
 	@Option(names = {"--auto-stub"},split=",", description = "create stub files for unsolved symbols (exprimental feature, only for java)")
 	private boolean autoStub = false;	
-	@Option(names = {"--type-filter"},split=",",  completionCandidates = DependsCommand.SupportedTypes.class, description = "only filter the listed dependency types[${COMPLETION-CANDIDATES}]")
+	@Option(names = {"--type-filter"},split=",", completionCandidates = DependsCommand.SupportedTypes.class, description = "only filter the listed dependency types[${COMPLETION-CANDIDATES}]")
     private String[] typeFilter=new String[]{};
 	@Option(names = {"--external-deps"}, description = "Output external dependencies")
 	private boolean outputExternalDependencies = false;	
 	@Option(names = {"--duck-typing-deduce"}, description = "Deduce implicit variable types")
 	private boolean duckTypingDeduce = true;	
-	@Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
+	@Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help and exit")
     boolean help;
 	public DependsCommand() {
 	}
@@ -106,8 +106,8 @@ public class DependsCommand {
 		return format;
 	}
 	public String getOutputDir() {
-		if (dir==null) {
-			dir = System.getProperty("user.dir");
+		if (dir == null) {
+			dir = System.getProperty("user.dir"); // the directory where java is run from
 		}
 		return dir;
 	}
@@ -146,7 +146,7 @@ public class DependsCommand {
 		return autoStub;
 	}
 	public List<String> getTypeFilter() {
-		if (typeFilter.length==0) {
+		if (typeFilter.length == 0) {
 			return DependencyType.allDependencies();
 		}
 		return java.util.Arrays.asList(typeFilter);

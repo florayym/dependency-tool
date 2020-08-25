@@ -16,11 +16,6 @@ repositories {
 
 dependencies {
     //    compile 'cn.emergentdesign.se:utils:0.0.1'
-    //    compile 'eclipse-photon:org.eclipse.equinox.registry:3.8.500.v20190714-1850'
-    //    compile 'eclipse-photon:org.eclipse.equinox.common:3.10.500.v20190815-1535'
-    //    compile 'eclipse-photon:org.eclipse.equinox.preferences:3.7.500.v20190815-1535'
-    //    compile 'eclipse-photon:org.eclipse.core.jobs:3.10.500.v20190620-1426'
-    //    compile 'org.jruby:jrubyparser:0.5.5-SNAPSHOT'
     implementation files('libs/antlr4-maven-plugin-4.7.2.jar')
     implementation files('libs/antlr4-runtime-4.8.jar')
     implementation files('libs/commons-io-2.6.jar')
@@ -35,15 +30,30 @@ dependencies {
     implementation files('libs/poi-ooxml-3.16.jar')
     implementation files('libs/slf4j-api-1.7.25.jar')
     implementation files('libs/slf4j-log4j12-1.7.25.jar')
+    implementation files('libs/log4j-1.2.17.jar')
     implementation files('libs/backport-util-concurrent.jar')
     implementation files('libs/plexus-utils-3.3.0.jar')
     implementation files('libs/org.eclipse.cdt.core_6.9.0.201909091953.jar')
+    implementation files('libs/org.eclipse.equinox.registry-3.8.500.jar')
+    implementation files('libs/org.eclipse.equinox.common-3.10.500.jar')
+    implementation files('libs/org.eclipse.equinox.preferences-3.7.500.jar')
+    implementation files('libs/org.eclipse.core.jobs-3.10.500.jar')
     implementation files('libs/org.eclipse.core.resources_3.13.500.v20190819-0800.jar')
     implementation files('libs/org.eclipse.core.runtime_3.14.0.v20180417-0825-4.8.0.jar')
     implementation files('libs/org.eclipse.osgi_3.15.0.v20190830-1434.jar')
     implementation files('libs/yydebug.jar')
     implementation files('libs/commons-collections4-4.4.jar')
-    implementation files('libs/log4j-1.2.17.jar')
+    implementation files('libs/jrubyparser-0.5.5-SNAPSHOT.jar')
+}
+
+// FIXME Exception in thread "main" java.lang.NoClassDefFoundError: org/slf4j/LoggerFactory at depends.extractor.AbstractLangProcessor.<clinit>(AbstractLangProcessor.java:98)
+jar {
+    manifest {
+        attributes (
+                'Main-Class': 'depends.Main',
+                'Class-Path': configurations.runtime.files.collect { "libs/$it.name" }.join(' ')
+        )
+    }
 }
 
 group = 'cn.emergentdesign.se'

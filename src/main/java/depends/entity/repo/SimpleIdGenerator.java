@@ -2,9 +2,9 @@ package depends.entity.repo;
 
 public class SimpleIdGenerator implements IdGenerator {
 
-	private int nextAvaliableIndex;
+	private int nextAvailableIndex;
 	public SimpleIdGenerator() {
-		nextAvaliableIndex = 0;
+		nextAvailableIndex = 0;
 	}
 	/**
 	 * Generate a global unique ID for entity
@@ -12,7 +12,7 @@ public class SimpleIdGenerator implements IdGenerator {
 	 */
 	@Override
 	public Integer generateId() {
-		return nextAvaliableIndex++;
+		return nextAvailableIndex++;
 	}
 
 }

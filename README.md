@@ -37,7 +37,7 @@ After all the java recognizer is generated, copy them to the extractor/language 
 Program arguments:
 
 ```shell
-java D:\test analyzed -d gui\result -f js
+java C:\Users\y50016379\DevEcoStudioProjects\apk-dependency-graph\src analyzed -d gui\result -f js -g package
 ```
 
 ## Download and installation

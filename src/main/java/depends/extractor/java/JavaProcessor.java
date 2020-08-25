@@ -52,7 +52,7 @@ public class JavaProcessor extends AbstractLangProcessor {
 	
 	@Override
 	protected FileParser createFileParser(String fileFullPath) {
-		return new JavaFileParser(fileFullPath,entityRepo, inferer);
+		return new JavaFileParser(fileFullPath, entityRepo, inferer);
 	}
 	
 	@Override
@@ -66,22 +66,22 @@ public class JavaProcessor extends AbstractLangProcessor {
 	}
 	
 	@Override
-	public List<String> supportedRelations() { // NOTE all java support dependency relationships, 13 in total
-		ArrayList<String> depedencyTypes = new ArrayList<>();
-		depedencyTypes.add(IMPORT);
-		depedencyTypes.add(CONTAIN);
-		depedencyTypes.add(IMPLEMENT);
-		depedencyTypes.add(INHERIT);
-		depedencyTypes.add(CALL);
-		depedencyTypes.add(PARAMETER);
-		depedencyTypes.add(RETURN);
-		depedencyTypes.add(SET);
-		depedencyTypes.add(CREATE);
-		depedencyTypes.add(USE);
-		depedencyTypes.add(CAST);
-		depedencyTypes.add(THROW);
-		depedencyTypes.add(ANNOTATION);
-		return depedencyTypes;
+	public List<String> supportedRelations() { // NOTE all java support dependency relations, 13 in total
+		ArrayList<String> dependencyTypes = new ArrayList<>();
+		dependencyTypes.add(IMPORT);
+		dependencyTypes.add(CONTAIN);
+		dependencyTypes.add(IMPLEMENT);
+		dependencyTypes.add(INHERIT);
+		dependencyTypes.add(CALL);
+		dependencyTypes.add(PARAMETER);
+		dependencyTypes.add(RETURN);
+		dependencyTypes.add(SET);
+		dependencyTypes.add(CREATE);
+		dependencyTypes.add(USE);
+		dependencyTypes.add(CAST);
+		dependencyTypes.add(THROW);
+		dependencyTypes.add(ANNOTATION);
+		return dependencyTypes;
 	}
 	
 

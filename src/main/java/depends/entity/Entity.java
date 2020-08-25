@@ -32,7 +32,7 @@ import java.util.*;
 /**
  * Entity is the root of all entities, including file, package, module, 
  * class, method/function etc.
- * Each entity has unique id, name,qualifiedName, parent, children
+ * Each entity has unique id, name, qualifiedName, parent, children
  * We also use entity to record relations 
  */
 public abstract class Entity {
@@ -46,7 +46,7 @@ public abstract class Entity {
     ArrayList<Relation> relations;
 	private Entity actualReferTo = null;
 	private boolean inScope = true;
-	protected HashMap<String, Entity> visibleNames = new HashMap<>();
+	protected HashMap<String, Entity> visibleNames = new HashMap<>(); // self rawName and all children's name
 	private Location location = new Location();
 	public Entity() {};
     public Entity(GenericName rawName, Entity parent, Integer id) {
@@ -159,16 +159,20 @@ public abstract class Entity {
 	}
 
 	/**
-	 * Get ancestor of type.  
-	 * @param classType
+	 * IMP
+	 *  go up and get ancestor of it until the type of ancestor matches the type of itself
+	 * @param classType the matching type
 	 * @return null (if not exist) or the type
 	 */
 	public Entity getAncestorOfType(@SuppressWarnings("rawtypes") Class classType) {
 		Entity fromEntity = this;
-		while(fromEntity!=null) {
-			if (fromEntity.getClass().equals(classType))
+		while (fromEntity != null) {
+			if (fromEntity.getClass().equals(classType)) {
 				return fromEntity;
-			if (fromEntity.getParent()==null) return null;
+			}
+			if (fromEntity.getParent() == null) {
+				return null;
+			}
 			fromEntity = fromEntity.getParent();
 		}
 		return null;

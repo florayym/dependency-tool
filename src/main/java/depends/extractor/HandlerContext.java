@@ -75,7 +75,7 @@ public abstract class HandlerContext {
 			pushToStack(currentTypeEntity);
 			addToRepo(currentTypeEntity);
 		 	currentFileEntity.addType(currentTypeEntity);
-			return currentTypeEntity;		
+			return currentTypeEntity;
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public abstract class HandlerContext {
 	}
 
 	public AliasEntity foundNewAlias(String aliasName, String originalName) {
-		if (aliasName.equals(originalName)) return null; //it is a tricky, we treat same name no different. 
+		if (aliasName.equals(originalName)) return null; //it is tricky, we treat same name no different. 
 		//indeed it is not perfect -> the right match should depends on no-bare format like "struct a" instead of "a"
 		AliasEntity currentTypeEntity = new AliasEntity(GenericName.build(aliasName), this.latestValidContainer(),
 				idGenerator.generateId(),GenericName.build(originalName) );

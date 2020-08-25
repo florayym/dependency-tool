@@ -6,7 +6,9 @@
 // Output:
 "use strict";
 
-var level = 2; // TODO how to pass this para by user
+// TODO how to pass these paras by user
+var level = 1;
+var searchValue = ".";
 
 var objcdv = {
     version: "0.0.1",
@@ -183,14 +185,16 @@ var objcdv = {
                 var str = name;
                 var fromIndex = 0;
                 while (level > 0) {
-                    fromIndex = str.lastIndexOf("/")
+                    fromIndex = str.lastIndexOf(searchValue);
                     if (fromIndex == -1) {
                         break;
                     }
                     str = str.substring(0, fromIndex);
                     level--;
                 }
-                return name.substring(fromIndex + 1, name.indexOf("/", fromIndex + 1));
+                var endIndex = name.indexOf(searchValue, fromIndex + 1);
+                endIndex = endIndex == -1 ? name.length - 1 : endIndex;
+                return name.substring(fromIndex + 1, endIndex);
 
                 /* NOTE Grouping from right to left */
                 // var prefix = name;

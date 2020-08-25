@@ -36,6 +36,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class FunctionDependencyGenerator extends DependencyGenerator {
+
+	@Override
 	public DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter) {
 		DependencyMatrix dependencyMatrix = new DependencyMatrix(typeFilter);
 		Iterator<Entity> iterator = entityRepo.entityIterator();

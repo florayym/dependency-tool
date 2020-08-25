@@ -119,7 +119,7 @@ public class MatrixLevelReducer {
 		int result = -1;
 		try {
 			result = Integer.parseInt(level);
-		} catch (Exception e) {
+		} catch (Exception e) { // java.lang.NumberFormatException: level is not a number string
 			result = -1;
 		}
 		if (result <= 0) {

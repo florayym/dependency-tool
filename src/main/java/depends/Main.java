@@ -42,6 +42,7 @@ import multilang.depends.util.file.path.FilenameWritter;
 import multilang.depends.util.file.path.UnixPathFilenameWritter;
 import multilang.depends.util.file.path.WindowsPathFilenameWritter;
 import depends.generator.DependencyGenerator;
+import depends.generator.PackageDependencyGenerator;
 import depends.generator.FileDependencyGenerator;
 import depends.generator.FunctionDependencyGenerator;
 import depends.matrix.core.DependencyMatrix;
@@ -72,7 +73,7 @@ public class Main {
 				CommandLine.usage(new DependsCommand(), System.out);
 			} else if (e instanceof ParameterException){
 				System.err.println(e.getMessage());
-			}else {
+			} else {
 				System.err.println("Exception encountered. If it is a design error, please report issue to us." );
 				e.printStackTrace();
 			}
@@ -91,7 +92,7 @@ public class Main {
 
 		inputDir = FileUtil.uniqFilePath(inputDir);
 		boolean supportImplLink = false;
-		if (app.getLang().equals("cpp") || app.getLang().equals("python")) supportImplLink = true; // NOTE what is supportImplLink, why only cpp & python
+		if (app.getLang().equals("cpp") || app.getLang().equals("python")) supportImplLink = true;
 
 		if (app.isAutoInclude()) {
 			FolderCollector includePathCollector = new FolderCollector();
@@ -100,7 +101,7 @@ public class Main {
 			includeDir = additionalIncludePaths.toArray(new String[] {});
 		}
 			
-		AbstractLangProcessor langProcessor = LangProcessorRegistration.getRegistry().getProcessorOf(lang); // NOTE this is the processor
+		AbstractLangProcessor langProcessor = LangProcessorRegistration.getRegistry().getProcessorOf(lang);
 		if (langProcessor == null) {
 			System.err.println("Not support this language: " + lang);
 			return;
@@ -108,13 +109,13 @@ public class Main {
 
 		if ( app.isDv8map()) {
 			DV8MappingFileBuilder dv8MapfileBuilder = new DV8MappingFileBuilder(langProcessor.supportedRelations());
-			dv8MapfileBuilder.create(outputDir+File.separator+"depends-dv8map.mapping");
+			dv8MapfileBuilder.create(outputDir+File.separator + "depends-dv8map.mapping");
 		}
 		
 		long startTime = System.currentTimeMillis();
 		
 		FilenameWritter filenameWritter = new EmptyFilenameWritter();
-		if (!StringUtils.isEmpty(app.getNamePathPattern())) { // FIXME what does the dot mean?
+		if (!StringUtils.isEmpty(app.getNamePathPattern())) {
 			if (app.getNamePathPattern().equals("dot")||
 					app.getNamePathPattern().equals(".")) {
 				filenameWritter = new DotPathFilenameWritter();
@@ -125,51 +126,55 @@ public class Main {
 					app.getNamePathPattern().equals("\\")) {
 				filenameWritter = new WindowsPathFilenameWritter();
 			}else{
-				throw new ParameterException("Unknown name pattern paremater:" + app.getNamePathPattern());
+				throw new ParameterException("Unknown name pattern parameter:" + app.getNamePathPattern());
 			}
 		}
 
 		
 		/* by default use file dependency generator */
 		DependencyGenerator dependencyGenerator = new FileDependencyGenerator();
-		if (!StringUtils.isEmpty(app.getGranularity())) { // NOTE is this the only three types of src? A method, a single file, or a smali file?
+		if (!StringUtils.isEmpty(app.getGranularity())) {
 			/* method parameter means use method generator */
 			if (app.getGranularity().equals("method"))
-					dependencyGenerator = new FunctionDependencyGenerator();
+				dependencyGenerator = new FunctionDependencyGenerator();
+			else if (app.getGranularity().equals("package"))
+				dependencyGenerator = new PackageDependencyGenerator();
 			else if (app.getGranularity().equals("file"))
+				// This is the default setting: File Dependency. The number of nodes equals the number of files contained in the input directory
 				/*no action*/;
 			else if (app.getGranularity().startsWith("L"))
+				// Level as granularity
 				/*no action*/;
 			else
 				throw new ParameterException("Unknown granularity parameter:" + app.getGranularity());
 		}
 		
 		if (app.isStripLeadingPath() ||
-				app.getStrippedPaths().length>0) {
+				app.getStrippedPaths().length > 0) { // Default: false and false
 			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(app.isStripLeadingPath(),inputDir,app.getStrippedPaths()));
 		}
 		
-		if (app.isDetail()) {
+		if (app.isDetail()) { // Default: false
 			dependencyGenerator.setGenerateDetail(true);
 		}
 		
 		dependencyGenerator.setFilenameRewritter(filenameWritter);
 		langProcessor.setDependencyGenerator(dependencyGenerator);
 		
-		langProcessor.buildDependencies(inputDir, includeDir,app.getTypeFilter(),supportImplLink,app.isOutputExternalDependencies(),app.isDuckTypingDeduce()); // IMP key working
+		langProcessor.buildDependencies(inputDir, includeDir,app.getTypeFilter(),supportImplLink,app.isOutputExternalDependencies(),app.isDuckTypingDeduce());
 		
 		
 		DependencyMatrix matrix = langProcessor.getDependencies();
 
 		if (app.getGranularity().startsWith("L")) {
-			matrix = new MatrixLevelReducer(matrix,app.getGranularity().substring(1)).shrinkToLevel();
+			matrix = new MatrixLevelReducer(matrix, app.getGranularity().substring(1)).shrinkToLevel();
 		}
 		DependencyDumper output = new DependencyDumper(matrix);
 		output.outputResult(inputDir, outputName, outputDir, outputFormat);
 		if (app.isOutputExternalDependencies()) {
 			Set<UnsolvedBindings> unsolved = langProcessor.getExternalDependencies();
-	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved,app.getOutputName(),app.getOutputDir(),
-	    			new LeadingNameStripper(app.isStripLeadingPath(),inputDir,app.getStrippedPaths()));
+	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved,app.getOutputName(), app.getOutputDir(),
+	    			new LeadingNameStripper(app.isStripLeadingPath(), inputDir,app.getStrippedPaths()));
 	    	unsolvedSymbolDumper.output();
 		}
 		long endTime = System.currentTimeMillis();

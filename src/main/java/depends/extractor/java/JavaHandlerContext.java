@@ -32,20 +32,23 @@ import depends.relations.Inferer;
 
 public class JavaHandlerContext extends HandlerContext {
 
-	public JavaHandlerContext(EntityRepo entityRepo,Inferer inferer) {
-		super(entityRepo,inferer);
+	public JavaHandlerContext(EntityRepo entityRepo, Inferer inferer) {
+		super(entityRepo, inferer);
 	}
 
+	/**
+	 * This is a java-only function, since package is a special type of entity belongs to java
+	 *
+	 * @param packageName the name of package the class belongs to
+	 * @return PackageEntity --> TypeEntity --> ContainerEntity
+	 */
 	public Entity foundNewPackage(String packageName) {
 		Entity pkgEntity = entityRepo.getEntity(packageName);
 		if (pkgEntity == null) {
 			pkgEntity = new PackageEntity(packageName, idGenerator.generateId());
 			entityRepo.add(pkgEntity);
 		}
-		Entity.setParent(currentFileEntity,pkgEntity);
+		Entity.setParent(currentFileEntity, pkgEntity);
 		return pkgEntity;
 	}
-
-
-
 }

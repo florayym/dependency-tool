@@ -78,6 +78,9 @@ public class JavaScriptFormatDependencyDumper extends AbstractFormatDependencyDu
 	}
 
 	private String formatName(String str) {
+		if (!str.contains("\\")) {
+			return str;
+		}
 		return str.replaceAll("\\\\", "/").substring(inputDir.length() + 1).split("\\.")[0];
 	}
 

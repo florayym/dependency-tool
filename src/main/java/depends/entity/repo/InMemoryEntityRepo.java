@@ -36,19 +36,19 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 		
 	}
 	
-	private Map<String, Entity> allEntieisByName;
+	private Map<String, Entity> allEntitiesByName;
 	private Map<Integer, Entity> allEntitiesById;
 	private List<Entity> allFileEntitiesByOrder;
 
 	public InMemoryEntityRepo() {
-		allEntieisByName = new TreeMap<>();
+		allEntitiesByName = new TreeMap<>();
 		allEntitiesById = new TreeMap<>();
 		allFileEntitiesByOrder = new LinkedList<>();
 	}
 
 	@Override
 	public Entity getEntity(String entityName) {
-		return allEntieisByName.get(entityName);
+		return allEntitiesByName.get(entityName);
 	}
 
 	@Override
@@ -60,20 +60,20 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 	public void add(Entity entity) {
 		allEntitiesById.put(entity.getId(), entity);
 		String name = entity.getRawName().uniqName();
-		if (entity.getQualifiedName() != null && !(entity.getQualifiedName().isEmpty())) {
+		if (entity.getQualifiedName() != null && !entity.getQualifiedName().isEmpty()) {
 			name = entity.getQualifiedName();
 		}
-		if (allEntieisByName.containsKey(name)) {
-			Entity existedEntity = allEntieisByName.get(name);
+		if (allEntitiesByName.containsKey(name)) { // for C++, ruby... multi-declare entities
+			Entity existedEntity = allEntitiesByName.get(name);
 			if (existedEntity instanceof MultiDeclareEntities) {
 				((MultiDeclareEntities) existedEntity).add(entity);
 			} else {
 				MultiDeclareEntities eMultiDeclare = new MultiDeclareEntities(existedEntity, this.generateId());
 				eMultiDeclare.add(entity);
-				allEntieisByName.put(name, eMultiDeclare);
+				allEntitiesByName.put(name, eMultiDeclare);
 			}
 		} else {
-			allEntieisByName.put(name, entity);
+			allEntitiesByName.put(name, entity);
 		}
 		if (entity.getParent() != null)
 			Entity.setParent(entity, entity.getParent());
