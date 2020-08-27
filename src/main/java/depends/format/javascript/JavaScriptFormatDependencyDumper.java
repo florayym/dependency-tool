@@ -32,13 +32,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import depends.format.AbstractFormatDependencyDumper;
-import depends.format.FileAttributes;
-import depends.format.json.DetailItem;
-import depends.matrix.core.DependencyDetail;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.core.DependencyPair;
 import depends.matrix.core.DependencyValue;
@@ -79,9 +75,11 @@ public class JavaScriptFormatDependencyDumper extends AbstractFormatDependencyDu
 
 	private String formatName(String str) {
 		if (!str.contains("\\")) {
-			return str;
+			return str.substring(str.indexOf('.', str.indexOf('.') + 1) + 1);
 		}
-		return str.replaceAll("\\\\", "/").substring(inputDir.length() + 1).split("\\.")[0];
+		str = str.replaceAll("\\\\", "/").substring(inputDir.length() + 1).split("\\.")[0];
+		//		return str.substring(str.indexOf('/', str.indexOf('/', str.indexOf('/') + 1) + 1) + 1);
+		return str;
 	}
 
 	private Map<String, Float> buildValueObject(Collection<DependencyValue> dependencies) {

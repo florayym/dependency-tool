@@ -3,7 +3,6 @@
 *.class
 *.log
 .idea/
-data/
 *.DS_Store
 /target/
 .classpath
@@ -16,6 +15,7 @@ lang
 build
 gen
 #libs
+*.zip
 *.iml
 result
 local.properties

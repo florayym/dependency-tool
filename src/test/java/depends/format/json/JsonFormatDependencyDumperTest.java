@@ -35,11 +35,12 @@ public class JsonFormatDependencyDumperTest {
 	 }
 	 @Ignore
 	public void testJson() throws IOException {
-		
+
+	 	String inputDir = "";
 		String projectName = "test";
 		String outputDir =  folder.getRoot().getAbsolutePath();
 		outputDir = "/tmp/";
-		JsonFormatDependencyDumper dumper = new JsonFormatDependencyDumper(dependencyMatrix, projectName, outputDir);
+		JsonFormatDependencyDumper dumper = new JsonFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir);
 		dumper.output();
 		System.out.println(outputDir+File.separator+"test.json");
 		
@@ -47,10 +48,11 @@ public class JsonFormatDependencyDumperTest {
 
 	@Ignore
 	public void testExcel() throws IOException {
+		String inputDir = "";
 		String projectName = "test";
 		String outputDir =  folder.getRoot().getAbsolutePath();
 		outputDir = "/tmp/";
-		ExcelXlsxFormatDependencyDumper dumper = new ExcelXlsxFormatDependencyDumper(dependencyMatrix, projectName, outputDir);
+		ExcelXlsxFormatDependencyDumper dumper = new ExcelXlsxFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir);
 		dumper.output();
 		System.out.println(outputDir+File.separator+"test.xlsx");
 		
