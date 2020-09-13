@@ -15,16 +15,17 @@
 1. ImplLink
 1. Annotation
 1. Mixin
+1. Set
 
 For most of relation types, the name is self-explained. 
 *ImplLink* relation need more information. 
 
-* ImplLink
+## ImplLink
 
-## Supported Lanaguages
+### Supported Languages
 C/C++, Python
 
-## Brief Description
+### Brief Description
 *ImplLink* could be explains as *implementation link*, or *implicit link*.
 In c/cpp file, if function *foo* calls function *bar*, we have relations of foo-[calls]-bar.
 
@@ -33,7 +34,7 @@ During runtime, the function called by *foo* is determined by link time.
 
 *ImplLink* indicates that there is a implementation link between function *foo* and all of implementations of function *bar*.
 
-## Example:
+### Example:
 
     //File A
     void foo(){
@@ -60,14 +61,14 @@ The relations of above code will be:
 # Examples of relations
 
 ## Import
-### Supported Lanaguages
-All lanaguages
+### Supported Languages
+All languages
 
 ### Brief Description
 
 *Import* is a relation between files. It indicates that *File A* includes or imports from *File B*.
 
-###Examples
+### Examples
 
 #### C/C++
 
@@ -85,15 +86,15 @@ All lanaguages
     require 'require_2'
     
 ## Contain
-### Supported Lanaguages
-All lanaguages
+### Supported Languages
+All languages
 
 ### Brief Description
 
 *Contain* is a relation between code elements(entities). It indicates that *Element A* contains *Element B*.
 For example, A class could contains a member, A function could contains a variable, etc. 
 
-###Examples
+### Examples
 
 #### C/C++
     class A {
@@ -140,8 +141,8 @@ For example, A class could contains a member, A function could contains a variab
     end
 
 ## Parameter
-### Supported Lanaguages
-All lanaguages
+### Supported Languages
+All languages
 
 ### Brief Description
 
@@ -163,8 +164,8 @@ All lanaguages
     end
         
 ## Call
-### Supported Lanaguages
-All lanaguages
+### Supported Languages
+All languages
 
 ### Brief Description
 
@@ -198,8 +199,8 @@ All lanaguages
     end             
 
 ## Return
-### Supported Lanaguages
-All lanaguages
+### Supported Languages
+All languages
 
 ### Brief Description
 
@@ -235,7 +236,7 @@ All lanaguages
     end         
 
 ## Throw
-### Supported Lanaguages
+### Supported Languages
 C++,Java,Ruby, Python
 
 ### Brief Description
@@ -266,8 +267,8 @@ C++,Java,Ruby, Python
     end          
     
 ## Implement
-### Supported Lanaguages
-C,C++, Java
+### Supported Languages
+C/C++, Java
 
 ### Brief Description
 
@@ -291,8 +292,8 @@ We say that foo() of A.c implements foo of A.h
     }
        
 ## Extends
-### Supported Lanaguages
-C,C++, Java, Python, Ruby
+### Supported Languages
+C/C++, Java, Python, Ruby
 
 ### Brief Description
 
@@ -300,42 +301,42 @@ C,C++, Java, Python, Ruby
 
  
  ## Create
- ### Supported Lanaguages
- C,C++, Java, Python, Ruby
+ ### Supported Languages
+ C/C++, Java, Python, Ruby
  
  ### Brief Description
  
  *Create* is a relation of the function and objects it created
  
 ## Cast
-### Supported Lanaguages
-  C,C++, Java
+### Supported Languages
+  C/C++, Java
   
 ### Brief Description
   *Cast* is a relation of an expression and the casted types
   
 ## Use
-### Supported Lanaguages
-  All lanaguages
+### Supported Languages
+  All languages
   
 ### Brief Description
   *Use* is a relation of an expression and the types/variables used by the expression.
    
 ## Annotation
-### Supported Lanaguages
+### Supported Languages
   Java/Python
   
 ### Brief Description
   The *Annotation* relation in Java, and *Decorator* relation of Python.
   
 ## MixIn
-### Supported Lanaguages
+### Supported Languages
   Ruby
   
 ### Brief Description
   Same as *Mix-in* of Ruby lanaguage.
   
     
-  
- 
- 
+## Set
+### Supported Languages
+  C/C++, Java, Python, Kotlin, Ruby

@@ -39,9 +39,10 @@ var objcdv = {
 
             getNode: function getNode(nodeName) {
                 var node = this.nodesSet[nodeName];
+                // 如果不存在，创建一个新的节点
                 if (node == null) {
                     var idx = this.node_index;
-                    this.nodesSet[nodeName] = node = { idx: idx, name: nodeName, source: 1, dest: 0 };
+                    this.nodesSet[nodeName] = node = { idx: idx, name: nodeName, source: 1, dest: 0, lines_num: 0 }; // NOTE
                     this.node_index++;
                 }
                 return node;
@@ -202,6 +203,12 @@ var objcdv = {
 
         var graph = this._createGraph();
         var prefixes = this._createPrefixes();
+
+        // NOTE with website
+        // dependencies.nodes.forEach(function (node) {
+        //     var local_node = graph.getNode(node['id']);
+        //     local_node.lines_num = node['lines_num'];
+        // });
 
         dependencies.links.forEach(function (link) {
             graph.addLink(link);

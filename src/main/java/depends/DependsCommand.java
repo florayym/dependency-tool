@@ -39,49 +39,51 @@ public class DependsCommand {
 		private static final long serialVersionUID = 1L;
 		public SupportedLangs() { super( LangProcessorRegistration.getRegistry().getLangs()); }
 	}
-	
+
 	public static class SupportedTypes extends ArrayList<String> {
 		private static final long serialVersionUID = 1L;
 		public SupportedTypes() { super( DependencyType.allDependencies()); }
 	}
-	
-	@Parameters(index = "0", completionCandidates = DependsCommand.SupportedLangs.class, description = "The lanauge of project files: [${COMPLETION-CANDIDATES}]")
-    private String lang;
+
+	@Parameters(index = "0", completionCandidates = DependsCommand.SupportedLangs.class, description = "The language of project files: [${COMPLETION-CANDIDATES}]")
+	private String lang;
 	@Parameters(index = "1", description = "The directory to be analyzed")
-    private String src;
+	private String src;
 	@Parameters(index = "2",  description = "The output file name")
 	private String output;
-    @Option(names = {"-f", "--format"},split=",", description = "the output format: [js(default)|json|xml|excel|detail|dot|plantuml]")
-    private String[] format=new String[]{"js"};
+	@Option(names = {"-f", "--format"},split=",", description = "the output format: [js(default)|json|xml|excel|detail|dot|plantuml]")
+	private String[] format=new String[]{"js"};
 	@Option(names = {"-d", "--dir"},  description = "The output directory")
 	private String dir;
 	@Option(names = {"-m", "--map"}, description = "Output DV8 dependency map file.")
-    private boolean dv8map = true;
+	private boolean dv8map = true;
 	@Option(names = {"-s", "--strip-leading-path"}, description = "Strip the leading path.")
-    private boolean stripLeadingPath = false;
+	private boolean stripLeadingPath = false;
 	@Option(names = {"--strip-paths"}, split=",", description = "The path(s) to be stripped. if -s enabled, the path(s) start after <src>. "
 			+ "Otherwise, the path(s) should be valid.")
 	private String[] strippedPaths = new String[]{};
 	@Option(names = {"-g", "--granularity"}, description = "Granularity of dependency.[file(default)|method|package|L#(the level of folder. e.g. L1=1st level folder)]")
-    private String granularity="file";
+	private String granularity="file";
 	@Option(names = {"-p", "--namepattern"}, description = "The name path pattern.[dot(.), unix(/) or windows(\\)")
-    private String namePathPattern="";
+	private String namePathPattern="";
 	@Option(names = {"-i","--includes"}, split=",", description = "The files of searching path")
-    private String[] includes = new String[] {};
+	private String[] includes = new String[] {};
 	@Option(names = {"--auto-include"}, split=",", description = "auto include all paths under the source path (please notice the potential side effect)")
 	private boolean autoInclude = false; // NOTE --auto-include for autoInclude (recursively)
+	@Option(names = {"--db"}, description = "database configure file directory")
+	private String dbConfig = null;
 	@Option(names = {"--detail"}, split=",", description = "add detail dependency information to output (only applicable for JSON output format)")
-	private boolean detail = false;	
+	private boolean detail = false;
 	@Option(names = {"--auto-stub"},split=",", description = "create stub files for unsolved symbols (exprimental feature, only for java)")
-	private boolean autoStub = false;	
+	private boolean autoStub = false;
 	@Option(names = {"--type-filter"},split=",", completionCandidates = DependsCommand.SupportedTypes.class, description = "only filter the listed dependency types[${COMPLETION-CANDIDATES}]")
-    private String[] typeFilter=new String[]{};
+	private String[] typeFilter=new String[]{};
 	@Option(names = {"--external-deps"}, description = "Output external dependencies")
-	private boolean outputExternalDependencies = false;	
+	private boolean outputExternalDependencies = false;
 	@Option(names = {"--duck-typing-deduce"}, description = "Deduce implicit variable types")
-	private boolean duckTypingDeduce = true;	
+	private boolean duckTypingDeduce = true;
 	@Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help and exit")
-    boolean help;
+	boolean help;
 	public DependsCommand() {
 	}
 	public String getLang() {
@@ -117,10 +119,13 @@ public class DependsCommand {
 	public String[] getIncludes() {
 		return includes;
 	}
+	public String getDbConfig() {
+		return dbConfig;
+	}
 	public boolean isHelp() {
 		return help;
 	}
-    public String getGranularity() {
+	public String getGranularity() {
 		return granularity;
 	}
 	public String getNamePathPattern() {
@@ -129,7 +134,7 @@ public class DependsCommand {
 	public boolean isStripLeadingPath() {
 		return stripLeadingPath;
 	}
-	
+
 	public boolean isAutoInclude () {
 		return autoInclude;
 	}
@@ -154,7 +159,7 @@ public class DependsCommand {
 	public boolean isOutputExternalDependencies() {
 		return outputExternalDependencies;
 	}
-	
+
 	public boolean isDuckTypingDeduce() {
 		return this.duckTypingDeduce;
 	}

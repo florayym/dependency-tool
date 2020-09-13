@@ -3,8 +3,8 @@
 *.class
 *.log
 .idea/
+.vscode/
 *.DS_Store
-/target/
 .classpath
 .project
 .settings/
@@ -14,10 +14,11 @@ lang
 .gradle
 build
 gen
-#libs
+libs
 *.zip
 *.iml
 result
+config.json
 local.properties
 project.properties
 settings.gradle

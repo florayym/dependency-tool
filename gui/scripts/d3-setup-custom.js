@@ -2,25 +2,38 @@
 //  =============== CONFIGURABLE PARAMS  ==============
 //  ===================================================
 
+// 默认链接距离
 var default_link_distance = 10;
 
 // How far can we change default_link_distance?
 // 0   - I don't care
 // 0.5 - Change it as you want, but it's preferrable to have default_link_distance
 // 1   - One does not change default_link_distance
+// 默认链接强度
 var default_link_strength = 0.7;
 
+// 默认环半径
 var default_circle_radius = 15;
 
 var show_names = true;
 var show_inactive_elements = true;
+// 默认最大文本长度
 var default_max_texts_length = 100;
 
 var charge_multiplier = 200;
 
-var dvgraph = objcdv.parse_dependencies_graph(dependencies); // TODO parse dependencies in .json to .js
+// 从依赖关系解析得到图
+var dvgraph = objcdv.parse_dependencies_graph(dependencies);
 var d3graph = dvgraph.d3jsGraph();
 
+// NOTE add 最大代码行数
+var max_lines_num = 1;
+// for (var i = 0; i < dependencies.nodes.length; i++) {
+//     if(dependencies.nodes[i].lines_num > max_lines_num)
+//         max_lines_num = dependencies.nodes[i].lines_num;
+// }
+
+// 各个参数
 var w = window,
         d = document,
         e = d.documentElement,
@@ -33,7 +46,7 @@ var w = window,
 //  ===================================================
 
 // https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors
-var color = d3.scale.category10();
+var color = d3.scale.category10(); // var color = d3.scale.category20();
 
 var container = d3.select("#chart").append("svg")
         .attr("width", x)
@@ -121,6 +134,10 @@ var node = svg.append("g").selectAll("circle.node")
         .style("fill", function (d) {
             return color(d.group)
         })
+        // NOTE add stroke-width
+        .style("stroke-width", function (d) {
+            return 0.1;
+        })
         .attr("class", "node")
         .attr("source", function (d) {
             return d.source
@@ -197,6 +214,7 @@ function updateNodeVisibilities() {
 force.on("tick", function (e) {
     svg.selectAll(".node").attr("r", radius);
     link.attr("d", link_line);
+    // console.log(link);
     node.attr("transform", transform);
     if (show_names) {
         text.attr("transform", transform);
@@ -221,7 +239,10 @@ function link_line(d) {
 
     var endX = d.target.x - dx * rdest;
     var endY = d.target.y - dy * rdest;
-    return "M" + startX + "," + startY + "L" + endX + "," + endY;
+    if(window.isNaN(startX)) // NOTE add
+        return "M" + 5000 + "," + 5000 + "L" + 5000 + "," + 5000; // NOTE add
+    else // NOTE add
+        return "M" + startX + "," + startY + "L" + endX + "," + endY;
 }
 
 function transform(d) {
@@ -229,7 +250,7 @@ function transform(d) {
 }
 
 function radius(d) {
-    return default_circle_radius + default_circle_radius * d.source / 10;
+    return default_circle_radius + (default_circle_radius * d.lines_num / max_lines_num) / 5; // NOTE original = default_circle_radius + default_circle_radius * d.source / 10;
 }
 
 /*

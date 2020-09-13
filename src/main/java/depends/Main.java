@@ -85,8 +85,9 @@ public class Main {
 	private static void executeCommand(DependsCommand app) throws ParameterException {
 		String lang = app.getLang();
 		String inputDir = app.getSrc();
+		String dbConfigDir = app.getDbConfig();
 		String[] includeDir = app.getIncludes();
-		String outputName = app.getOutputName();
+		String outputFileName = app.getOutputName();
 		String outputDir = app.getOutputDir();
 		String[] outputFormat = app.getFormat();
 
@@ -170,7 +171,7 @@ public class Main {
 			matrix = new MatrixLevelReducer(matrix, app.getGranularity().substring(1)).shrinkToLevel();
 		}
 		DependencyDumper output = new DependencyDumper(matrix);
-		output.outputResult(inputDir, outputName, outputDir, outputFormat);
+		output.outputResult(inputDir, outputFileName, outputDir, outputFormat, dbConfigDir);
 		if (app.isOutputExternalDependencies()) {
 			Set<UnsolvedBindings> unsolved = langProcessor.getExternalDependencies();
 	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved,app.getOutputName(), app.getOutputDir(),
