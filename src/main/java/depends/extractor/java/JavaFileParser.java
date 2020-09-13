@@ -70,7 +70,7 @@ public class JavaFileParser implements depends.extractor.FileParser{
 			bridge.done();
 	    	
 	    } catch (Exception e) {
-	    	System.err.println("error encountered during parse..." );
+	    	System.err.println("error encountered during parsing..." );
 	    	e.printStackTrace();
 	    }
 	    

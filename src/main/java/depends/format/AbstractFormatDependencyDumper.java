@@ -29,21 +29,23 @@ import java.io.File;
 import depends.matrix.core.DependencyMatrix;
 
 public abstract class AbstractFormatDependencyDumper {
-	protected String name;
+	protected String outputFileName;
 	protected String inputDir;
 	protected DependencyMatrix matrix;
 	protected String outputDir;
+	protected DBUtils db;
 
-	public AbstractFormatDependencyDumper(DependencyMatrix matrix, String inputDir, String projectName, String outputDir) {
+	public AbstractFormatDependencyDumper(DependencyMatrix matrix, String inputDir, String outputFileName, String outputDir, String dbConfigDir) {
 		this.matrix = matrix;
 		this.inputDir = inputDir;
-		this.name = projectName;
+		this.outputFileName = outputFileName;
 		this.outputDir = outputDir;
+		this.db = dbConfigDir == null ? null : new DBUtils(dbConfigDir); // --db config.json
 	}
 
 	public abstract boolean output();
 	public abstract String getFormatName();
 	protected String composeFilename() {
-		return outputDir + File.separator + name;
+		return outputDir + File.separator + outputFileName;
 	}
 }

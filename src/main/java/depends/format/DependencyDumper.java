@@ -47,24 +47,24 @@ public class DependencyDumper {
 		this.dependencyMatrix = dependencies;
 	}
 	
-	public void outputResult(String inputDir, String projectName, String outputDir, String[] outputFormat) {
-        outputDeps(inputDir, projectName, outputDir, outputFormat);
+	public void outputResult(String inputDir, String outputFileName, String outputDir, String[] outputFormat, String dbConfigDir) {
+        outputDeps(inputDir, outputFileName, outputDir, outputFormat, dbConfigDir);
 	}
 	
-	private final void outputDeps(String inputDir, String projectName, String outputDir, String[] outputFormat) {
+	private final void outputDeps(String inputDir, String outputFileName, String outputDir, String[] outputFormat, String dbConfigDir) {
 		@SuppressWarnings("unchecked")
 		List<String> formatList = Arrays.asList(outputFormat);
-		AbstractFormatDependencyDumper[] builders = new AbstractFormatDependencyDumper[] {
-		 	new DetailTextFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
-		 	new XmlFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
-		 	new JsonFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
-		 	new JavaScriptFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
-		 	new ExcelXlsFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
-		 	new ExcelXlsxFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
-		 	new DotFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
-		 	new DotFullnameDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
-		 	new PlantUmlFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir),
-		 	new BriefPlantUmlFormatDependencyDumper(dependencyMatrix, inputDir, projectName, outputDir)
+		AbstractFormatDependencyDumper[] builders = new AbstractFormatDependencyDumper[] { // seems a waste! repeat so many times, should it judge which type it will use then initialize the specific ones?
+		 	new DetailTextFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
+		 	new XmlFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
+		 	new JsonFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
+		 	new JavaScriptFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
+		 	new ExcelXlsFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
+		 	new ExcelXlsxFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
+		 	new DotFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
+		 	new DotFullnameDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
+		 	new PlantUmlFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
+		 	new BriefPlantUmlFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir)
 		};
 		for (AbstractFormatDependencyDumper builder : builders) {
 			if (formatList.contains(builder.getFormatName())){

@@ -38,14 +38,14 @@ public class JsonFormatDependencyDumper extends AbstractFormatDependencyDumper {
 		return "json";
 	}
 
-	public JsonFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String projectName, String outputDir) {
-		super(dependencyMatrix, inputDir, projectName, outputDir);
+	public JsonFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String projectName, String outputDir, String dbConfigDir) {
+		super(dependencyMatrix, inputDir, projectName, outputDir, dbConfigDir);
 	}
 
 	@Override
 	public boolean output() {
 		JDataBuilder jBuilder = new JDataBuilder();
-		JDepObject jDepObject = jBuilder.build(matrix, new FileAttributes(name));
+		JDepObject jDepObject = jBuilder.build(matrix, new FileAttributes(outputFileName));
 		toJson(jDepObject, composeFilename()+ ".json");
 		return true;
 	}
