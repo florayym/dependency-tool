@@ -201,8 +201,8 @@ var objcdv = {
             color_scale: 255 * 2,
             computeHeatIndex: function computeHeatIndex(heat) {
                 var heat_index = Math.round((heat_max - heat) / (heat_max - heat_min) * this.color_scale);
-                return heat_index <= 255 ? {"r": 255, "g": heat_index, "b": 0}
-                 : {"r": this.color_scale - heat_index, "g": 255, "b": 0};
+                return heat_index <= 255 ? { "r": 255, "g": heat_index, "b": 0 }
+                    : { "r": this.color_scale - heat_index, "g": 255, "b": 0 };
             }
         };
     },

@@ -90,6 +90,7 @@ public class Main {
 		String outputFileName = app.getOutputName();
 		String outputDir = app.getOutputDir();
 		String[] outputFormat = app.getFormat();
+		String granularity = app.getGranularity();
 
 		inputDir = FileUtil.uniqFilePath(inputDir);
 		boolean supportImplLink = false;
@@ -134,20 +135,20 @@ public class Main {
 		
 		/* by default use file dependency generator */
 		DependencyGenerator dependencyGenerator = new FileDependencyGenerator();
-		if (!StringUtils.isEmpty(app.getGranularity())) {
+		if (!StringUtils.isEmpty(granularity)) {
 			/* method parameter means use method generator */
-			if (app.getGranularity().equals("method"))
+			if (granularity.equals("method"))
 				dependencyGenerator = new FunctionDependencyGenerator();
-			else if (app.getGranularity().equals("package"))
+			else if (granularity.equals("package"))
 				dependencyGenerator = new PackageDependencyGenerator();
-			else if (app.getGranularity().equals("file"))
+			else if (granularity.equals("file"))
 				// This is the default setting: File Dependency. The number of nodes equals the number of files contained in the input directory
 				/*no action*/;
-			else if (app.getGranularity().startsWith("L"))
+			else if (granularity.startsWith("L"))
 				// Level as granularity
 				/*no action*/;
 			else
-				throw new ParameterException("Unknown granularity parameter:" + app.getGranularity());
+				throw new ParameterException("Unknown granularity parameter:" + granularity);
 		}
 		
 		if (app.isStripLeadingPath() ||
@@ -167,11 +168,11 @@ public class Main {
 		
 		DependencyMatrix matrix = langProcessor.getDependencies();
 
-		if (app.getGranularity().startsWith("L")) {
-			matrix = new MatrixLevelReducer(matrix, app.getGranularity().substring(1)).shrinkToLevel();
+		if (granularity.startsWith("L")) {
+			matrix = new MatrixLevelReducer(matrix, granularity.substring(1)).shrinkToLevel();
 		}
 		DependencyDumper output = new DependencyDumper(matrix);
-		output.outputResult(inputDir, outputFileName, outputDir, outputFormat, dbConfigDir);
+		output.outputResult(inputDir, outputFileName, outputDir, outputFormat, dbConfigDir, granularity);
 		if (app.isOutputExternalDependencies()) {
 			Set<UnsolvedBindings> unsolved = langProcessor.getExternalDependencies();
 	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved, app.getOutputName(), app.getOutputDir(),

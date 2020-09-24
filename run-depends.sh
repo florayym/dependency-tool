@@ -75,6 +75,7 @@ for DIR in "${inputPath}/"*; do
         PROJNAME="$( basename "${DIR}" )"
         PROJPATH="$( dirname "${DIR}" )/${PROJNAME}"
         echo "[$i] Processing "${PROJPATH}" ..."
+        # TODO add duration in the command list
         ${JAVAPATH} -jar ${jarPath} ${language} ${PROJPATH} ${PROJNAME} -d ${outputPath} -f ${format} -g ${granularity} --db ${config}
     fi
 done

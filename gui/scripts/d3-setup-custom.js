@@ -15,7 +15,7 @@ var default_link_strength = 0.7;
 // 默认环半径
 var default_circle_radius = 13;
 
-var show_names = false;
+var show_names = true;
 var show_inactive_elements = true;
 
 // 默认最大文本长度
@@ -44,11 +44,11 @@ for (var i = 0; i < dependencies.nodes.length; i++) {
 
 // 各个参数
 var w = window,
-        d = document,
-        e = d.documentElement,
-        g = d.getElementsByTagName('body')[0],
-        x = w.innerWidth || e.clientWidth || g.clientWidth,
-        y = w.innerHeight || e.clientHeight || g.clientHeight;
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName('body')[0],
+    x = w.innerWidth || e.clientWidth || g.clientWidth,
+    y = w.innerHeight || e.clientHeight || g.clientHeight;
 
 //  ===================================================
 //  =============== http://d3js.org/ Magic ===========
@@ -56,47 +56,46 @@ var w = window,
 
 // var color = d3.scale.category20();
 // var color = d3.scale.category10();
-function color (rgb) {
+function color(rgb) {
     return d3.rgb(rgb['r'], rgb['g'], rgb['b']);
 }
 
 var container = d3.select("#chart").append("svg")
-        .attr("width", x)
-        .attr("height", y)
-        .style("overflow", "hidden");
+    .attr("width", x)
+    .attr("height", y)
+    .style("overflow", "hidden");
 
 //  ===================================================
 //  =============== ZOOM LOGIC ========================
 //  ===================================================
 
 container.append("rect")
-        .attr("width", x)
-        .attr("height", y)
-        .style("fill", "none")
-        .style("pointer-events", "all")
-        .call(d3.behavior.zoom().on("zoom", function () {
-            svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
-        }));
-
+    .attr("width", x)
+    .attr("height", y)
+    .style("fill", "none")
+    .style("pointer-events", "all")
+    .call(d3.behavior.zoom().on("zoom", function () {
+        svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
+    }));
 
 //  ===================================================
 //  =============== FORCE LAYOUT ======================
 //  ===================================================
 
 var force = d3.layout.force()
-        .charge(function (d) {
-            return d.filtered ? 0 : -d.weight * charge_multiplier
-        })
-        .linkDistance(function (l) {
-            return l.source.filtered || l.target.filtered ? 500 : radius(l.source) + radius(l.target) + default_link_distance
-        })
-        .size([x, y])
-        .nodes(d3.values(d3graph.nodes))
-        .links(d3graph.links)
-        .linkStrength(function (l) {
-            return l.source.filtered || l.target.filtered ? 0 : default_link_strength
-        })
-        .start();
+    .charge(function (d) {
+        return d.filtered ? 0 : -d.weight * charge_multiplier
+    })
+    .linkDistance(function (l) {
+        return l.source.filtered || l.target.filtered ? 500 : radius(l.source) + radius(l.target) + default_link_distance
+    })
+    .size([x, y])
+    .nodes(d3.values(d3graph.nodes))
+    .links(d3graph.links)
+    .linkStrength(function (l) {
+        return l.source.filtered || l.target.filtered ? 0 : default_link_strength
+    })
+    .start();
 
 var svg = container.append('g');
 var actions = graph_actions.create(svg, dvgraph);
@@ -106,62 +105,53 @@ var actions = graph_actions.create(svg, dvgraph);
 //  ===================================================
 
 svg.append("defs").selectAll("marker")
-        .data(["default", "dependency", "dependants"])
-        .enter().append("marker")
-        .attr("id", function (d) {
-            return d;
-        })
-        .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 10)
-        .attr("refY", 0)
-        .attr("markerWidth", 10)
-        .attr("markerHeight", 10)
-        .attr("orient", "auto")
-        .attr("class", "marker")
-        .append("path")
-        .attr("d", "M0,-5L10,0L0,5");
+    .data(["default", "dependency", "dependants"])
+    .enter().append("marker")
+    .attr("id", function (d) {
+        return d;
+    })
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 10)
+    .attr("refY", 0)
+    .attr("markerWidth", 10)
+    .attr("markerHeight", 10)
+    .attr("orient", "auto")
+    .attr("class", "marker")
+    .append("path")
+    .attr("d", "M0,-5L10,0L0,5");
 
 //  ===================================================
 //  ================  TOOLTIP SETUP  ==================
 //  ===================================================
 
 var tooltip = d3
-//            .select("body")
-//            .select("#node-tooltip")
-            .select(".tooltip")
-//            .append("div")
-//            .append("span")
-//            .attr("class", "tooltipped")
-//            .attr("class", "tooltip")
-            .style("opacity", 0)
-            .style("background-color", "lightgrey")
-            .style("border", "solid")
-            .style("border-width", "2px")
-            .style("border-radius", "5px")
-            .style("width", "800px")
-            .style("left","250px")
-            .style("top","300px");
-//            .attr("data-position", "left")
-//            .attr("data-delay", "50")
-//            .attr("data-html", "true");
+    .select(".tooltip")
+    // .select("#chart")
+    // .append("div")
+    // .attr("class", "tooltip")
+    .style("background-color", "lightgrey")
+    .style("border-radius", "5px")
+    .style("border", "solid")
+    .style("padding", "10px")
+    .style("opacity", 0)
+    .style("width", "1000px")
+    ;
 
 var mouseover = function (d) {
-console.log("mode")
     tooltip
         .transition()
         .duration(200);
     tooltip
         .style("opacity", .9)
-//        .attr("data-tooltip", "Name: " + d.name + "<br />LOC: " + d.loc + "<br />Heat: " + d.heat)
         .html("Name: " + d.name + "<br />LOC: " + d.loc + "<br />Heat: " + d.heat)
-        .style("left", (d3.mouse(this)[0] + 30) + "px")
-        .style("top", (d3.mouse(this)[1] + 30) + "px");
+        .style("left", (d3.mouse(this)[0] + 300) + "px")
+        .style("top", (d3.mouse(this)[1] + 300) + "px");
 }
 
 var mousemove = function (d) {
     tooltip
-        .style("left", (d3.mouse(this)[0] + 30) + "px")
-        .style("top", (d3.mouse(this)[1] + 30)+ "px");
+        .style("left", (d3.mouse(this)[0] + 300) + "px")
+        .style("top", (d3.mouse(this)[1] + 300) + "px");
 }
 
 var mouseleave = function (d) {
@@ -176,68 +166,68 @@ var mouseleave = function (d) {
 //  ===================================================
 
 var link = svg.append("g").selectAll("path")
-        .data(d3graph.links)
-        .enter().append("path")
-        .attr("class", "link")
-        .attr("marker-end", "url(#default)")
-        .style("stroke-width", function (d) {
-            return 1;
-        });
+    .data(d3graph.links)
+    .enter().append("path")
+    .attr("class", "link")
+    .attr("marker-end", "url(#default)")
+    .style("stroke-width", function (d) {
+        return 1;
+    });
 
 //  ===================================================
 //  ===============  NODES SETUP     ==================
 //  ===================================================
 
 var node = svg.append("g").selectAll("circle.node")
-        .data(d3graph.nodes)
-        .enter().append("circle")
-        .attr("r", radius)
-        .style("fill", function (d) {
-            return color(d.group)
-        })
-        .style("stroke-width", function (d) {
-            return 0.1;
-        })
-        .attr("class", "node")
-        .attr("source", function (d) {
-            return d.source
-        })
-        .attr("dest", function (d) {
-            return d.dest
-        })
-        .call(force.drag)
-        .on("click", function (d) {
-            if (d3.event.defaultPrevented) {
-                return
-            }
-            actions.selectNodesStartingFromNode(d, 1);
-            force.start();
-        })
-        .on("contextmenu", function (d) {
-            if (d3.event.defaultPrevented) {
-                return
-            }
-            // Don't actually show context menu
-            d3.event.preventDefault();
+    .data(d3graph.nodes)
+    .enter().append("circle")
+    .attr("r", radius)
+    .style("fill", function (d) {
+        return color(d.group)
+    })
+    .style("stroke-width", function (d) {
+        return 0.1;
+    })
+    .attr("class", "node")
+    .attr("source", function (d) {
+        return d.source
+    })
+    .attr("dest", function (d) {
+        return d.dest
+    })
+    .call(force.drag)
+    .on("click", function (d) {
+        if (d3.event.defaultPrevented) {
+            return
+        }
+        actions.selectNodesStartingFromNode(d, 1);
+        force.start();
+    })
+    .on("contextmenu", function (d) {
+        if (d3.event.defaultPrevented) {
+            return
+        }
+        // Don't actually show context menu
+        d3.event.preventDefault();
 
-            actions.selectNodesStartingFromNode(d);
-            force.start();
-        })
-        .on("mouseover", mouseover)
-        .on("mousemove", mousemove)
-        .on("mouseleave", mouseleave);
+        actions.selectNodesStartingFromNode(d);
+        force.start();
+    })
+    .on("mouseover", mouseover)
+    .on("mousemove", mousemove)
+    .on("mouseleave", mouseleave);
 
 //  ===================================================
 //  ===============  TEXT NODES SETUP     =============
 //  ===================================================
 
 var text = svg.append("g").selectAll("text")
-        .data(force.nodes())
-        .enter().append("text")
-        .attr("visibility", "hidden")
-        .text(function (d) {
-            return d.name.substring(0, default_max_texts_length)
-        });
+    .data(force.nodes())
+    .enter().append("text")
+    .attr("visibility", "hidden")
+    .text(function (d) {
+        return d.name.split(/[\/\.]/g).slice(-1).pop().substring(0, default_max_texts_length);
+    });
 
 //  ===================================================
 //  ===============  LINK CLASS UPDATE    =============
@@ -291,8 +281,8 @@ force.on("tick", function (e) {
 //  ===================================================
 function link_line(d) {
     var dx = d.target.x - d.source.x,
-            dy = d.target.y - d.source.y,
-            dr = Math.sqrt(dx * dx + dy * dy);
+        dy = d.target.y - d.source.y,
+        dr = Math.sqrt(dx * dx + dy * dy);
 
     var rsource = radius(d.sourceNode) / dr;
     var rdest = radius(d.targetNode) / dr;
