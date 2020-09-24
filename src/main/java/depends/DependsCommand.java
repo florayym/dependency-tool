@@ -51,8 +51,8 @@ public class DependsCommand {
 	private String src;
 	@Parameters(index = "2",  description = "The output file name")
 	private String output;
-	@Option(names = {"-f", "--format"},split=",", description = "the output format: [js(default)|json|xml|excel|detail|dot|plantuml]")
-	private String[] format=new String[]{"js"};
+	@Option(names = {"-f", "--format"},split=",", description = "the output format: [js(default)|mysql|json|xml|excel|detail|dot|plantuml]")
+	private String[] format = new String[] {"js"};
 	@Option(names = {"-d", "--dir"},  description = "The output directory")
 	private String dir;
 	@Option(names = {"-m", "--map"}, description = "Output DV8 dependency map file.")
@@ -62,8 +62,8 @@ public class DependsCommand {
 	@Option(names = {"--strip-paths"}, split=",", description = "The path(s) to be stripped. if -s enabled, the path(s) start after <src>. "
 			+ "Otherwise, the path(s) should be valid.")
 	private String[] strippedPaths = new String[]{};
-	@Option(names = {"-g", "--granularity"}, description = "Granularity of dependency.[file(default)|method|package|L#(the level of folder. e.g. L1=1st level folder)]")
-	private String granularity="file";
+	@Option(names = {"-g", "--granularity"}, description = "Granularity of dependency.[package(default)|file|method|L#(the level of folder. e.g. L1=1st level folder)]")
+	private String granularity="package";
 	@Option(names = {"-p", "--namepattern"}, description = "The name path pattern.[dot(.), unix(/) or windows(\\)")
 	private String namePathPattern="";
 	@Option(names = {"-i","--includes"}, split=",", description = "The files of searching path")

@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DBUtils {
 
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private Connection conn = null;
-   // private PreparedStatement statement = null;
-
     private String sqlAccount = null;
     private String sqlPassword = null;
     private String sqlIP = null;
@@ -63,8 +63,7 @@ public class DBUtils {
     }
 
     public PreparedStatement getStatement(String sql) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement(sql);
-        return statement;
+        return conn.prepareStatement(sql);
     }
 
     public static String generateInsertSql(String tableName, String[] attributes) {
@@ -88,19 +87,23 @@ public class DBUtils {
         }
     }
 
-   // public void closeAll() {
-   //     try {
-   //         if (conn != null) {
-   //             conn.close();
-   //         }
-   //         if (statement != null) {
-   //             statement.close();
-   //         }
-   //     } catch (SQLException e) {
-   //         System.err.println("Connection close goes wrong. Connection cannot be closed properly.");
-   //         e.printStackTrace();
-   //     }
-   // }
+    public static Date getDate() {
+        return new Date(new java.util.Date().getTime());
+    }
+
+    public static Object[] execResult(PreparedStatement statement, int columnLength) throws SQLException {
+        if (statement == null) {
+            return null;
+        }
+        ResultSet resultSet = statement.executeQuery();
+        Object[] resultArray = new Object[columnLength];
+        if (resultSet.next()) {
+            for (int columnIndex = 0; columnIndex < columnLength; columnIndex++) {
+                resultArray[columnIndex] = resultSet.getObject(columnIndex + 1);
+            }
+        }
+        return resultArray;
+    }
 
     public void closeConnection() {
         try {

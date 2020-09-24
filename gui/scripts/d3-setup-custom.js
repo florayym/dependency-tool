@@ -9,29 +9,38 @@ var default_link_distance = 10;
 // 0   - I don't care
 // 0.5 - Change it as you want, but it's preferrable to have default_link_distance
 // 1   - One does not change default_link_distance
-// 默认链接强度
+// 默认链接强度（牵引力）
 var default_link_strength = 0.7;
 
 // 默认环半径
-var default_circle_radius = 15;
+var default_circle_radius = 13;
 
-var show_names = true;
+var show_names = false;
 var show_inactive_elements = true;
+
 // 默认最大文本长度
 var default_max_texts_length = 100;
 
+// 牵引力的乘数
 var charge_multiplier = 200;
+
+// Prefix grouping level (<--)
+var level = 2;
+
+// Coloring strategy: "heat" or "prefix"
+var grouping = "heat";
+var heat_max = 0.0;
+var heat_min = Number.MAX_SAFE_INTEGER;
 
 // 从依赖关系解析得到图
 var dvgraph = objcdv.parse_dependencies_graph(dependencies);
 var d3graph = dvgraph.d3jsGraph();
 
-// NOTE add 最大代码行数
-var max_lines_num = 1;
-// for (var i = 0; i < dependencies.nodes.length; i++) {
-//     if(dependencies.nodes[i].lines_num > max_lines_num)
-//         max_lines_num = dependencies.nodes[i].lines_num;
-// }
+// Get line of code scale
+var max_loc = 1;
+for (var i = 0; i < dependencies.nodes.length; i++) {
+    max_loc = Math.max(max_loc, dependencies.nodes[i].loc);
+}
 
 // 各个参数
 var w = window,
@@ -45,8 +54,11 @@ var w = window,
 //  =============== http://d3js.org/ Magic ===========
 //  ===================================================
 
-// https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors
-var color = d3.scale.category10(); // var color = d3.scale.category20();
+// var color = d3.scale.category20();
+// var color = d3.scale.category10();
+function color (rgb) {
+    return d3.rgb(rgb['r'], rgb['g'], rgb['b']);
+}
 
 var container = d3.select("#chart").append("svg")
         .attr("width", x)
@@ -109,6 +121,55 @@ svg.append("defs").selectAll("marker")
         .append("path")
         .attr("d", "M0,-5L10,0L0,5");
 
+//  ===================================================
+//  ================  TOOLTIP SETUP  ==================
+//  ===================================================
+
+var tooltip = d3
+//            .select("body")
+//            .select("#node-tooltip")
+            .select(".tooltip")
+//            .append("div")
+//            .append("span")
+//            .attr("class", "tooltipped")
+//            .attr("class", "tooltip")
+            .style("opacity", 0)
+            .style("background-color", "lightgrey")
+            .style("border", "solid")
+            .style("border-width", "2px")
+            .style("border-radius", "5px")
+            .style("width", "800px")
+            .style("left","250px")
+            .style("top","300px");
+//            .attr("data-position", "left")
+//            .attr("data-delay", "50")
+//            .attr("data-html", "true");
+
+var mouseover = function (d) {
+console.log("mode")
+    tooltip
+        .transition()
+        .duration(200);
+    tooltip
+        .style("opacity", .9)
+//        .attr("data-tooltip", "Name: " + d.name + "<br />LOC: " + d.loc + "<br />Heat: " + d.heat)
+        .html("Name: " + d.name + "<br />LOC: " + d.loc + "<br />Heat: " + d.heat)
+        .style("left", (d3.mouse(this)[0] + 30) + "px")
+        .style("top", (d3.mouse(this)[1] + 30) + "px");
+}
+
+var mousemove = function (d) {
+    tooltip
+        .style("left", (d3.mouse(this)[0] + 30) + "px")
+        .style("top", (d3.mouse(this)[1] + 30)+ "px");
+}
+
+var mouseleave = function (d) {
+    tooltip
+        .transition()
+        .duration(200)
+        .style("opacity", 0);
+}
 
 //  ===================================================
 //  ===============  LINKS SETUP     ==================
@@ -134,7 +195,6 @@ var node = svg.append("g").selectAll("circle.node")
         .style("fill", function (d) {
             return color(d.group)
         })
-        // NOTE add stroke-width
         .style("stroke-width", function (d) {
             return 0.1;
         })
@@ -162,7 +222,10 @@ var node = svg.append("g").selectAll("circle.node")
 
             actions.selectNodesStartingFromNode(d);
             force.start();
-        });
+        })
+        .on("mouseover", mouseover)
+        .on("mousemove", mousemove)
+        .on("mouseleave", mouseleave);
 
 //  ===================================================
 //  ===============  TEXT NODES SETUP     =============
@@ -214,7 +277,6 @@ function updateNodeVisibilities() {
 force.on("tick", function (e) {
     svg.selectAll(".node").attr("r", radius);
     link.attr("d", link_line);
-    // console.log(link);
     node.attr("transform", transform);
     if (show_names) {
         text.attr("transform", transform);
@@ -239,9 +301,9 @@ function link_line(d) {
 
     var endX = d.target.x - dx * rdest;
     var endY = d.target.y - dy * rdest;
-    if(window.isNaN(startX)) // NOTE add
-        return "M" + 5000 + "," + 5000 + "L" + 5000 + "," + 5000; // NOTE add
-    else // NOTE add
+    if (window.isNaN(startX))
+        return "M" + 5000 + "," + 5000 + "L" + 5000 + "," + 5000; // For HAWebsite
+    else
         return "M" + startX + "," + startY + "L" + endX + "," + endY;
 }
 
@@ -249,8 +311,9 @@ function transform(d) {
     return "translate(" + d.x + "," + d.y + ")";
 }
 
+// changed to loc determines node radius
 function radius(d) {
-    return default_circle_radius + (default_circle_radius * d.lines_num / max_lines_num) / 5; // NOTE original = default_circle_radius + default_circle_radius * d.source / 10;
+    return default_circle_radius * (1 + Math.pow(d.loc * 1.0 / max_loc, 1.1)); // default_circle_radius + default_circle_radius * d.source / 10;
 }
 
 /*

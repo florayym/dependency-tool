@@ -6,9 +6,6 @@
 // Output:
 "use strict";
 
-// TODO how to pass these paras by user
-var level = 2;
-
 var objcdv = {
     version: "0.0.1",
     _createGraph: function _createGraph() {
@@ -42,7 +39,7 @@ var objcdv = {
                 // 如果不存在，创建一个新的节点
                 if (node == null) {
                     var idx = this.node_index;
-                    this.nodesSet[nodeName] = node = { idx: idx, name: nodeName, source: 1, dest: 0, lines_num: 0 }; // NOTE
+                    this.nodesSet[nodeName] = node = { idx: idx, name: nodeName, source: 0, dest: 0, lines_num: 0 }; // NOTE changed source from 1 to 0
                     this.node_index++;
                 }
                 return node;
@@ -199,16 +196,31 @@ var objcdv = {
         };
     },
 
+    _createHeatGrouping: function _createHeatGrouping() {
+        return {
+            color_scale: 255 * 2,
+            computeHeatIndex: function computeHeatIndex(heat) {
+                var heat_index = Math.round((heat_max - heat) / (heat_max - heat_min) * this.color_scale);
+                return heat_index <= 255 ? {"r": 255, "g": heat_index, "b": 0}
+                 : {"r": this.color_scale - heat_index, "g": 255, "b": 0};
+            }
+        };
+    },
+
     parse_dependencies_graph: function parse_dependencies_graph(dependencies) {
 
         var graph = this._createGraph();
         var prefixes = this._createPrefixes();
+        var heat = this._createHeatGrouping();
 
-        // NOTE with website
-        // dependencies.nodes.forEach(function (node) {
-        //     var local_node = graph.getNode(node['id']);
-        //     local_node.lines_num = node['lines_num'];
-        // });
+        // get line of code
+        dependencies.nodes.forEach(function (node) {
+            var local_node = graph.getNode(node['name']);
+            local_node.loc = node['loc'];
+            local_node.heat = node['heat'];
+            heat_max = Math.max(heat_max, local_node.heat);
+            heat_min = Math.min(heat_min, local_node.heat);
+        });
 
         dependencies.links.forEach(function (link) {
             graph.addLink(link);
@@ -219,7 +231,7 @@ var objcdv = {
 
         graph.updateNodes(function (node) {
             node.weight = node.source;
-            node.group = prefixes.prefixIndexForName(node.name) + 1;
+            node.group = grouping == "prefix" ? prefixes.prefixIndexForName(node.name) + 1 : heat.computeHeatIndex(node.heat);
         });
 
         return graph;

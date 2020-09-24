@@ -38,8 +38,8 @@ public class XmlFormatDependencyDumper extends AbstractFormatDependencyDumper{
 	public String getFormatName() {
 		return "xml";
 	}
-    public XmlFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String outputFileName, String outputDir, String dbConfigDir) {
-		super(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir);
+    public XmlFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String outputFileName, String outputDir) {
+		super(dependencyMatrix, inputDir, outputFileName, outputDir);
 	}
 
 	private void toXml(XDepObject xDepObject, String xmlFileName)  {

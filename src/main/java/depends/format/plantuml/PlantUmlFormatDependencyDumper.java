@@ -19,8 +19,8 @@ public class PlantUmlFormatDependencyDumper extends AbstractFormatDependencyDump
 		return "plantuml";
 	}
 	
-	public PlantUmlFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String projectName, String outputDir, String dbConfigDir) {
-		super(dependencyMatrix, inputDir, projectName, outputDir, dbConfigDir);
+	public PlantUmlFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String projectName, String outputDir) {
+		super(dependencyMatrix, inputDir, projectName, outputDir);
 	}
 
 

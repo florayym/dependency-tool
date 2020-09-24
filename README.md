@@ -1,148 +1,3 @@
-# Introduction
-
-*Depends* is a source code dependency extraction tool, designed to infer syntactical relations among source code entities, such as files and methods, from various programming languages. Our objective is to provide a framework that is easily extensible to support dependency extraction from different programming languages and configuration files, so that other high-level analysis tools can be built upon it, in a language-independent fashion. Sample applications include code visualization, program comprehension, code smell detection, architecture analysis, design refactoring, etc.  
-
-Our creation of *Depends* is motivated by the observations that different vendors, such as Understand&trade;, Structure 101 &trade;, and Lattix&trade;, created their own dependency extraction tools that are packaged with their other analysis functions. To conduct new analysis, vendors and researchers must each create their own dependency extraction tools, or use the output of other tools, which are usually not designed to be reusable. 
-
-We believe that dependency analysis of software source code is one of the most important foundations of software engineering. Given the growing number of systems built on new languages and multi-languages, the need of a flexible, extensible multi-language dependency extraction framework, with simple and unified interfaces is widely recognized. 
-
-*Depends* is open source and free, to promote community collaboration, to avoid repetitive work, and to improve the quality of analytical tools.
-
-# Build tips
-
-## Create New Gradle Builds
-
-Create a build:
-
-```shell
-> gradle init
-```
-
-Then include [utils](https://github.com/multilang-depends/utils) and [jruby-parser](https://github.com/jruby/jruby-parser) in the `/src/main/java/`, and resolve all the other dependencies.
-
-## Generate ANTLR Recognizer
-
-ANTLR is distributed as a Java jar file. Under the same directory of your antlr jar file, run the following from the command line:
-
-```shell
-# Download ANTLR tool for Java target
-> wget https://www.antlr.org/download/antlr-4.8-complete.jar
-> java -jar antlr-4.8-complete.jar yourLanguageGrammar.g4 -visitor
-```
-
-After all the language recognizer (listeners and visitors) are generated, copy them to the `extractor/<language>` folder respectively.
-
-## Download dependencies
-
-Retrieve all the dependency jars into `./libs` directory. Import the URLs from `dependencies.txt` file.
-
-```shell
-$ wget -i dependencies.txt -P libs
-```
-
-# How to use *Depends*
-
-## Run with DevEco Studio
-
-Program arguments:
-
-```shell
-java C:\Users\y50016379\DevEcoStudioProjects\apk-dependency-graph\src analyzed -d gui\result -f js -g package
-```
-
-## Download and installation
-
-You could download the latest version of *Depends* from https://github.com/multilang-depends/depends/releases/,  
-and then unzip the ```depends-*version*.tgz``` file in any directory of your computer.
-
-*Depends* is written in java, so it could be run on any OS with a JRE or JDK envoirment (like Windows, Linux or Mac OS). 
-
-## Run it from commmand line
-
-Following the single responsibility principle, *Depends* is designed for the purpose of extracting dependencies only. It only provides CLI interface, without GUI. But you can convert the output of *Depends* into the GUI of other tools, such as GraphViz(http://graphviz.org/), PlantUML(http://plantuml.com/), and DV8 (https://www.archdia.com). 
-
-You could run *Depends* in the following ways: ```depends.sh``` on Linux/Mac, ```depends.bat``` on Microsoft Windows, or  ```java -jar depends.jar```.
-
-Note: If you encountered Out of Memory error like ```GC overhead limt exceed```, please expands
-the JVM memory like follwing ```java -Xmx4g -jar depends.jar <args>```.
-
-## Parameters
-
-The CLI tool usage could be listed by ```depends --help```, like following:
-
-    Usage: depends [-hms] [--auto-include] [-d=<dir>] [-g=<granularity>]
-                   [-p=<namePathPattern>] [-f=<format>[,<format>...]]...
-                   [-i=<includes>[,<includes>...]]... <lang> <src> <output>
-          <lang>                 The language of project files: [cpp, java, ruby, python,
-                                   pom]
-          <src>                  The directory to be analyzed
-          <output>               The output file name
-          --auto-include         auto include all paths under the source path (please
-                                   notice the potential side effect)
-      -i, --includes=<includes>[,<includes>...]
-                                 The files of searching path
-      -d, --dir=<dir>            The output directory
-      -f, --format=<format>[,<format>...]
-                                 The output format: [json(default),xml,excel,dot,
-                                   plantuml]
-      -g, --granularity=<granularity>
-                                 Granularity of dependency.[file(default),method,L#(the level of folder. e.g. L1=1st level folder)  ]
-      -h, --help                 Display this help and exit
-      -s, --strip-leading-path   Strip the leading path.
-      
-      -m, --map                  Output DV8 dependency map file.
-      -p, --namepattern=<namePathPattern>
-                                 The name path separators.[default(/),dot(.)
-
-
-To run *Depends*, you need to specify 3 most important parameters: ```lang```, ```src```,```output```, as explained above. 
-
-## Remember to specify include paths
-
-Please note that for most programming languages, such as ```C/C++, Ruby, Maven/Gradle```, the ```--includes``` path is important for *Depends* to find the right files when conducting code dependency analysis, similar to Makefile/IDE.  Otherwise, the extracted dependencies may not be accurate. 
-
-Do not specify include paths outside of src directory (e.g. system level include paths, or external dependencies) because *Depends* will not process them.
-
-```--auto-include``` is a useful parameter to simplify the input of include dirs: with this parameter, *Depends* will include all sub-directories of ```src```.
-
-For ```Java``` programs, you are not required to specify include paths, because the mapping between java file paths are explicitly stated in the import statements.
-
-### Output
-
-The output of *Depends* can be exported into 5 formats: json, xml, excel, dot, and plantuml. Due to the limitation of MS excel,  you can only export into a excel file if the number of elements is less than 256.)
-
-Dot files could be used to generate graphs using GraphViz (http://graphviz.org/).
-
-Plantuml files could be used to generate UML diagram using PlantUML (http://plantuml.com/).
-
-Json and XML files could be used to generate Design Structure Matrices (DSMs) using DV8 (https://www.archdia.net).
-
-The detail of json/xml format could be found [here](./doc/output_format.md).
-
-### How many dependency types does *Depends* support?
-
-*Depends* supports major dependency types, including:
-1. Call: function/method invoke
-1. Cast: type cast
-1. Contain: variable/field definition
-1. Create: create an instance of a certain type
-1. Extend: parent-child relation
-1. Implement: implemented interface
-1. Import/Include: for example, java ```import```, c/c++ ```#include```, ruby ```require```.
-1. Mixin: mix-in relation, for example ruby include
-1. Parameter: as a parameter of a method
-1. Return: returned type
-1. Throw: throw exceptions
-1. Use: use or set variables
-1. ImplLink: the implementation link between call and the implementation of prototype.
-1. Set: 
-
-For detail of supported types, please refer to [here](./doc/dependency_types.md)
-
-# Acknowledgement
-
-This project is built upon the excellent work of [multilang-depends](https://github.com/multilang-depends) projects.
-
 # 程序修改说明
 
 ## 项目构建与依赖
@@ -265,18 +120,18 @@ var prefix = this._getPrefixName(name, level);
 添加项目根目录下的 `run-depends.sh` ，用于在计算云上执行对指定目录下的所有项目的依赖分析。
 
 ```shell
-Usage: $0 -j <path/to/depends-version.jar> -i <repo/path/> -l <java|cpp|python|xml|kotlin> -o <output/path/> [-f <js(default)|json|xml|excel|detail|dot|plantuml>] -g <file|method|package> [-c <path/to/config.json>]
+Usage: $0 -j <path/to/depends-version.jar> -i <repo/path/> -l <java|cpp|python|kotlin|pom|ruby|xml> -o <output/path/> [-f js[,mysql|,json|,xml|,excel|,detail|,dot|,plantuml]] -g <package|file|method> [-c <path/to/config.json>]
 
 PARAMETER DESCRIPTION:
-    -j jar-path                                        path to depends-x.x.x.jar
-    -i input-path                                      path to repo to be analyzed
-    -l java|cpp|python|xml|kotlin                      project language
-    -o output-path                                     output path
-    -f js(default)|json|xml|excel|detail|dot|plantuml  output file format
-    -g file(default)|method|package|L#                 granularity
-    -c json-file                                       database configuration json
+    -j jar-path                                     path to depends-x.x.x.jar
+    -i input-path                                   path to repo to be analyzed
+    -l language                                     project language
+    -o output-path                                  output path
+    -f js|,json|,xml|,excel|,detail|,dot|,plantuml  output file format
+    -g package|file|method||L#                      granularity
+    -c json-file                                    database configuration json
 ```
 并于 `update.sh` 中执行命令。示例如下：
 ```shell
-$ ./run-depends.sh -j ~/workspaces/depends-dist-0.9.6/depends-0.9.6.jar -i ~/workspaces/MP_Test/ -l java -o $BASEPATH/HAWebsite/HeatAnalyzeWebsite/app/static/map/ -f js -g package -c $BASEPATH/config/config.json
+$ ./run-depends.sh -j /home/test/workspaces/depends-dist-0.9.6/depends-0.9.6.jar -i /home/test/workspaces/MP_Test/ -l java -o $BASEPATH/HAWebsite/HeatAnalyzeWebsite/app/static/map/package -f js,mysql -g package -c config/config.json
 ```

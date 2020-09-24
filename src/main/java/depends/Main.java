@@ -120,13 +120,13 @@ public class Main {
 			if (app.getNamePathPattern().equals("dot")||
 					app.getNamePathPattern().equals(".")) {
 				filenameWritter = new DotPathFilenameWritter();
-			}else if (app.getNamePathPattern().equals("unix")||
+			} else if (app.getNamePathPattern().equals("unix")||
 					app.getNamePathPattern().equals("/")) {
 				filenameWritter = new UnixPathFilenameWritter();
-			}else if (app.getNamePathPattern().equals("windows")||
+			} else if (app.getNamePathPattern().equals("windows")||
 					app.getNamePathPattern().equals("\\")) {
 				filenameWritter = new WindowsPathFilenameWritter();
-			}else{
+			} else {
 				throw new ParameterException("Unknown name pattern parameter:" + app.getNamePathPattern());
 			}
 		}
@@ -174,8 +174,8 @@ public class Main {
 		output.outputResult(inputDir, outputFileName, outputDir, outputFormat, dbConfigDir);
 		if (app.isOutputExternalDependencies()) {
 			Set<UnsolvedBindings> unsolved = langProcessor.getExternalDependencies();
-	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved,app.getOutputName(), app.getOutputDir(),
-	    			new LeadingNameStripper(app.isStripLeadingPath(), inputDir,app.getStrippedPaths()));
+	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved, app.getOutputName(), app.getOutputDir(),
+					new LeadingNameStripper(app.isStripLeadingPath(), inputDir, app.getStrippedPaths()));
 	    	unsolvedSymbolDumper.output();
 		}
 		long endTime = System.currentTimeMillis();

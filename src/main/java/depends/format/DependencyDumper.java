@@ -33,6 +33,7 @@ import depends.format.excel.ExcelXlsFormatDependencyDumper;
 import depends.format.excel.ExcelXlsxFormatDependencyDumper;
 import depends.format.javascript.JavaScriptFormatDependencyDumper;
 import depends.format.json.JsonFormatDependencyDumper;
+import depends.format.mysql.MySQLFormatDependencyDumper;
 import depends.format.plantuml.BriefPlantUmlFormatDependencyDumper;
 import depends.format.plantuml.PlantUmlFormatDependencyDumper;
 import depends.format.xml.XmlFormatDependencyDumper;
@@ -46,31 +47,33 @@ public class DependencyDumper {
 	public DependencyDumper(DependencyMatrix dependencies) {
 		this.dependencyMatrix = dependencies;
 	}
-	
+
 	public void outputResult(String inputDir, String outputFileName, String outputDir, String[] outputFormat, String dbConfigDir) {
         outputDeps(inputDir, outputFileName, outputDir, outputFormat, dbConfigDir);
 	}
-	
+
 	private final void outputDeps(String inputDir, String outputFileName, String outputDir, String[] outputFormat, String dbConfigDir) {
 		@SuppressWarnings("unchecked")
 		List<String> formatList = Arrays.asList(outputFormat);
-		AbstractFormatDependencyDumper[] builders = new AbstractFormatDependencyDumper[] { // seems a waste! repeat so many times, should it judge which type it will use then initialize the specific ones?
-		 	new DetailTextFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
-		 	new XmlFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
-		 	new JsonFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
+		AbstractFormatDependencyDumper[] builders = new AbstractFormatDependencyDumper[] {
+		 	new DetailTextFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
+		 	new XmlFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
+		 	new JsonFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
 		 	new JavaScriptFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
-		 	new ExcelXlsFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
-		 	new ExcelXlsxFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
-		 	new DotFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
-		 	new DotFullnameDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
-		 	new PlantUmlFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
-		 	new BriefPlantUmlFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir)
+			new MySQLFormatDependencyDumper(dependencyMatrix, inputDir, dbConfigDir),
+		 	new ExcelXlsFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
+		 	new ExcelXlsxFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
+		 	new DotFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
+		 	new DotFullnameDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
+		 	new PlantUmlFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
+		 	new BriefPlantUmlFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir)
 		};
 		for (AbstractFormatDependencyDumper builder : builders) {
 			if (formatList.contains(builder.getFormatName())){
-				builder.output();
+				if (!builder.output()) {
+					System.err.println("Output to " + builder.getFormatName() + " failed!");
+				}
 			}
 		}
     }
-	
 }

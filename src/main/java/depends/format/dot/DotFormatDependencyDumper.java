@@ -38,8 +38,8 @@ public class DotFormatDependencyDumper extends  AbstractFormatDependencyDumper{
 	public String getFormatName() {
 		return "dot";
 	}
-	public DotFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String outputFileName, String outputDir, String dbConfigDir) {
-		super(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir);
+	public DotFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String outputFileName, String outputDir) {
+		super(dependencyMatrix, inputDir, outputFileName, outputDir);
 	}
 	@Override
 	public boolean output() {

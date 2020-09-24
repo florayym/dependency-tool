@@ -33,14 +33,12 @@ public abstract class AbstractFormatDependencyDumper {
 	protected String inputDir;
 	protected DependencyMatrix matrix;
 	protected String outputDir;
-	protected DBUtils db;
 
-	public AbstractFormatDependencyDumper(DependencyMatrix matrix, String inputDir, String outputFileName, String outputDir, String dbConfigDir) {
+	public AbstractFormatDependencyDumper(DependencyMatrix matrix, String inputDir, String outputFileName, String outputDir) {
 		this.matrix = matrix;
 		this.inputDir = inputDir;
 		this.outputFileName = outputFileName;
 		this.outputDir = outputDir;
-		this.db = dbConfigDir == null ? null : new DBUtils(dbConfigDir); // --db config.json
 	}
 
 	public abstract boolean output();

@@ -39,8 +39,8 @@ public class DotFullnameDependencyDumper extends  AbstractFormatDependencyDumper
 	public String getFormatName() {
 		return "dotx";
 	}
-	public DotFullnameDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String projectName, String outputDir, String dbConfigDir) {
-		super(dependencyMatrix, inputDir, projectName, outputDir, dbConfigDir);
+	public DotFullnameDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String projectName, String outputDir) {
+		super(dependencyMatrix, inputDir, projectName, outputDir);
 	}
 	@Override
 	public boolean output() {
