@@ -137,7 +137,9 @@ public class PomListener extends XMLParserBaseListener {
 			if (parentFileName != null) {
 				FileParser importedParser = parseCreator.createFileParser(parentFileName);
 				try {
-					System.out.println("parsing " + parentFileName);
+					if (parseCreator.logging) {
+						System.out.println("parsing " + parentFileName);
+					}
 					importedParser.parse();
 				} catch (Exception e) {
 					System.err.println("parsing error in " + parentFileName);
@@ -159,8 +161,7 @@ public class PomListener extends XMLParserBaseListener {
 			return "project";
 
 		ElementContext p = (ElementContext) node;
-		String name = p.Name().get(0).getText();
-		return name;
+		return p.Name().get(0).getText();
 	}
 
 	public void done() {

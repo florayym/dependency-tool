@@ -38,7 +38,7 @@ import depends.extractor.ParserCreator;
 import depends.extractor.ruby.jruby.JRubyFileParser;
 import depends.relations.ImportLookupStrategy;
 
-public class RubyProcessor extends AbstractLangProcessor implements ParserCreator{
+public class RubyProcessor extends AbstractLangProcessor implements ParserCreator {
     private static final String LANG = "ruby";
     private static final String[] SUFFIX = new String[] {".rb"};
 	private ExecutorService executor;
@@ -60,7 +60,7 @@ public class RubyProcessor extends AbstractLangProcessor implements ParserCreato
 	@Override
 	public FileParser createFileParser(String fileFullPath) {
 		executor = Executors.newSingleThreadExecutor();
-		return new JRubyFileParser(fileFullPath,entityRepo,executor,new IncludedFileLocator(super.includePaths()),inferer,this);
+		return new JRubyFileParser(fileFullPath, entityRepo, executor, new IncludedFileLocator(super.includePaths()), inferer, this);
 	}
 
 
@@ -83,19 +83,19 @@ public class RubyProcessor extends AbstractLangProcessor implements ParserCreato
 	
 	@Override
 	public List<String> supportedRelations() {
-		ArrayList<String> depedencyTypes = new ArrayList<>();
-		depedencyTypes.add(IMPORT);
-		depedencyTypes.add(CONTAIN);
-		depedencyTypes.add(INHERIT);
-		depedencyTypes.add(CALL);
-		depedencyTypes.add(PARAMETER);
-		depedencyTypes.add(RETURN);
-		depedencyTypes.add(SET);
-		depedencyTypes.add(CREATE);
-		depedencyTypes.add(USE);
-		depedencyTypes.add(CAST);
-		depedencyTypes.add(THROW);
-		depedencyTypes.add(MIXIN);
-		return depedencyTypes;
+		ArrayList<String> dependencyTypes = new ArrayList<>();
+		dependencyTypes.add(IMPORT);
+		dependencyTypes.add(CONTAIN);
+		dependencyTypes.add(INHERIT);
+		dependencyTypes.add(CALL);
+		dependencyTypes.add(PARAMETER);
+		dependencyTypes.add(RETURN);
+		dependencyTypes.add(SET);
+		dependencyTypes.add(CREATE);
+		dependencyTypes.add(USE);
+		dependencyTypes.add(CAST);
+		dependencyTypes.add(THROW);
+		dependencyTypes.add(MIXIN);
+		return dependencyTypes;
 	}		
 }

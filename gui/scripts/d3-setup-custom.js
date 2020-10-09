@@ -25,10 +25,10 @@ var default_max_texts_length = 100;
 var charge_multiplier = 200;
 
 // Prefix grouping level (<--)
-var level = 2;
+var color_level = 2;
 
 // Coloring strategy: "heat" or "prefix"
-var grouping = "heat";
+var color_group = "prefix";
 var heat_max = 0.0;
 var heat_min = Number.MAX_SAFE_INTEGER;
 
@@ -55,8 +55,8 @@ var w = window,
 //  ===================================================
 
 // var color = d3.scale.category20();
-// var color = d3.scale.category10();
-function color(rgb) {
+var color_category = d3.scale.category10();
+function color_rgb(rgb) {
     return d3.rgb(rgb['r'], rgb['g'], rgb['b']);
 }
 
@@ -183,7 +183,7 @@ var node = svg.append("g").selectAll("circle.node")
     .enter().append("circle")
     .attr("r", radius)
     .style("fill", function (d) {
-        return color(d.group)
+        return color_group == 'prefix' ? color_category(d.group.prefix) : color_rgb(d.group.heat);
     })
     .style("stroke-width", function (d) {
         return 0.1;
@@ -322,6 +322,7 @@ w.onresize = function () {
 //  ===================================================
 d3.selectAll("input").on("change", function change() {
 
+    console.log(this);
     if (this.name == "circle_size") {
         default_circle_radius = parseInt(this.value);
         force.linkDistance(function (l) {
@@ -336,6 +337,13 @@ d3.selectAll("input").on("change", function change() {
     if (this.name == "link_strength") {
         default_link_strength = parseInt(this.value) / 10;
         force.linkStrength(default_link_strength);
+    }
+
+    if (this.name == "coloring") {
+        color_group = this.value;
+        node.style("fill", function (d) {
+            return color_group == "prefix" ? color_category(d.group.prefix) : color_rgb(d.group.heat);
+        });
     }
 
     if (this.name == "show_names") {

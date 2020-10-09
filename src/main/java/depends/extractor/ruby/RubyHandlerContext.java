@@ -40,21 +40,21 @@ import multilang.depends.util.file.FileUtil;
 public class RubyHandlerContext extends HandlerContext {
 
 	private IncludedFileLocator includedFileLocator;
-	private ParserCreator parserCreator;
+	private RubyProcessor parserCreator;
 	public RubyHandlerContext(EntityRepo entityRepo, 
 			IncludedFileLocator includedFileLocator,
 			ExecutorService executorService,
-			Inferer inferer, ParserCreator parserCreator) {
+			Inferer inferer, RubyProcessor parserCreator) {
 		super(entityRepo,inferer);
 		this.includedFileLocator = includedFileLocator;
 		this.parserCreator = parserCreator;
 	}
 	
-	public Entity foundNamespace(String nampespaceName) {
+	public Entity foundNamespace(String namespaceName) {
 		Entity parentEntity = currentFile();
 		if (latestValidContainer()!=null) 
 			parentEntity = latestValidContainer();
-		PackageEntity pkgEntity = new PackageEntity(nampespaceName, parentEntity,idGenerator.generateId());
+		PackageEntity pkgEntity = new PackageEntity(namespaceName, parentEntity, idGenerator.generateId());
 		entityRepo.add(pkgEntity);
 		entityStack.push(pkgEntity);
 		return pkgEntity;
@@ -62,7 +62,7 @@ public class RubyHandlerContext extends HandlerContext {
 
 	public void processSpecialFuncCall(String methodName, Collection<String> params) {
 		// Handle Import relation
-		if(methodName.equals("require") || methodName.equals("require_relative")) { 
+		if (methodName.equals("require") || methodName.equals("require_relative")) { 
 			for (String importedFilename:params) {
 				if (!importedFilename.endsWith(".rb")) importedFilename = importedFilename + ".rb";
 				String dir = FileUtil.getLocatedDir(currentFile().getRawName().uniqName());
@@ -73,10 +73,12 @@ public class RubyHandlerContext extends HandlerContext {
 				}
 				FileParser importedParser = parserCreator.createFileParser(inclFileName);
 				try {
-					System.out.println("parsing "+inclFileName);
+					if (parserCreator.logging) {
+						System.out.println("parsing " + inclFileName);
+					}
 					importedParser.parse();
 				} catch (Exception e) {
-					System.err.println("parsing error in "+inclFileName);
+					System.err.println("parsing error in " + inclFileName);
 				}
 				foundNewImport(new FileImport(inclFileName));
 			}

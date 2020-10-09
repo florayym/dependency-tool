@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.concurrent.ExecutorService;
 
+import depends.extractor.ruby.RubyProcessor;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.jrubyparser.CompatVersion;
@@ -49,12 +50,12 @@ public class JRubyFileParser implements FileParser {
 	private ExecutorService executor;
 	private IncludedFileLocator includesFileLocator;
 	private Inferer inferer;
-	private ParserCreator parserCreator;
+	private RubyProcessor parserCreator;
 
 	public JRubyFileParser(String fileFullPath, EntityRepo entityRepo, 
 			ExecutorService executorService, 
 			IncludedFileLocator includesFileLocator, 
-			Inferer inferer, ParserCreator parserCreator) {
+			Inferer inferer, RubyProcessor parserCreator) {
         this.fileFullPath  = FileUtil.uniqFilePath(fileFullPath);
         this.entityRepo = entityRepo;
         this.executor = executorService;
@@ -68,7 +69,7 @@ public class JRubyFileParser implements FileParser {
 	public void parse() throws IOException {
 		/** If file already exist, skip it */
 		Entity fileEntity = entityRepo.getEntity(fileFullPath);
-		if (fileEntity!=null && fileEntity instanceof FileEntity) {
+		if (fileEntity instanceof FileEntity) {
 			return;
 		}
 		
@@ -79,7 +80,7 @@ public class JRubyFileParser implements FileParser {
 		ParserConfiguration config = new ParserConfiguration(0, version);
 		try {
 			Node node = rubyParser.parse("<code>", in, config);
-			JRubyVisitor parser = new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator,executor,inferer,parserCreator);
+			JRubyVisitor parser = new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator, executor, inferer, parserCreator);
 			node.accept(parser);
 			fileEntity = entityRepo.getEntity(fileFullPath);
 			((FileEntity)fileEntity).cacheAllExpressions();

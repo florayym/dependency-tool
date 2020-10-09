@@ -71,7 +71,7 @@ public class DependencyDumper {
 		for (AbstractFormatDependencyDumper builder : builders) {
 			if (formatList.contains(builder.getFormatName())){
 				if (!builder.output()) {
-					System.err.println("Output to " + builder.getFormatName() + " failed!");
+					System.err.println("Output to " + builder.getFormatName() + " is not executed. Please double check.");
 				}
 			}
 		}

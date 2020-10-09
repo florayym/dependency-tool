@@ -9,6 +9,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 public class DBUtils {
 
@@ -88,7 +90,10 @@ public class DBUtils {
     }
 
     public static Date getDate() {
-        return new Date(new java.util.Date().getTime());
+        // return new Date(new java.util.Date().getTime());
+        Timestamp ts = new Timestamp(new java.util.Date().getTime());
+        System.out.println("Execution time: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(ts));
+        return new Date(ts.getTime());
     }
 
     public static Object[] execResult(PreparedStatement statement, int columnLength) throws SQLException {

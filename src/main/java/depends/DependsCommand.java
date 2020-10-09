@@ -63,7 +63,9 @@ public class DependsCommand {
 			+ "Otherwise, the path(s) should be valid.")
 	private String[] strippedPaths = new String[]{};
 	@Option(names = {"-g", "--granularity"}, description = "Granularity of dependency.[package(default)|file|method|L#(the level of folder. e.g. L1=1st level folder)]")
-	private String granularity="package";
+	private String granularity = "package";
+	@Option(names = {"-l", "--logging"}, description = "Enable logging file parsing process.")
+	private boolean logging = false;
 	@Option(names = {"-p", "--namepattern"}, description = "The name path pattern.[dot(.), unix(/) or windows(\\)")
 	private String namePathPattern="";
 	@Option(names = {"-i","--includes"}, split=",", description = "The files of searching path")
@@ -135,11 +137,14 @@ public class DependsCommand {
 		return stripLeadingPath;
 	}
 
-	public boolean isAutoInclude () {
+	public boolean isAutoInclude() {
 		return autoInclude;
 	}
-	public boolean isDetail () {
+	public boolean isDetail() {
 		return detail;
+	}
+	public boolean isLogging() {
+		return logging;
 	}
 	public String[] getStrippedPaths() {
 		return strippedPaths;

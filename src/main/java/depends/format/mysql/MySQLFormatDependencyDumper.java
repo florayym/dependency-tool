@@ -2,7 +2,6 @@ package depends.format.mysql;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -55,18 +54,30 @@ public class MySQLFormatDependencyDumper extends AbstractFormatDependencyDumper 
             return false;
         }
 
+        Date date = DBUtils.getDate();
+
+        // Do not add repetitive data, return false, should judge before all the program runs.
+        // try (PreparedStatement stmtCheckRepeat = db.getStatement("SELECT COUNT(*) FROM dependencies_id WHERE collected_date = '" + date.toString() + "'")) {
+        //     Object[] resultArray = DBUtils.execResult(stmtCheckRepeat, 1);
+        //     String existed = resultArray == null || resultArray[0] == null ? "0" : resultArray[0].toString();
+        //     if (!existed.equals("0")) {
+        //         return false; // Optional: delete the existed and then go on.
+        //     }
+        // } catch (SQLException e) {
+        //     e.printStackTrace();
+        // }
+
+        String projectName = FormatUtils.getProjectName(inputDir);
+
 		ArrayList<String> nodes = matrix.getNodes();
 		Collection<DependencyPair> dependencyPairs = matrix.getDependencyPairs();
 
-        String projectName = FormatUtils.getProjectName(inputDir);
-        Date date = DBUtils.getDate();
         // try-with-resources declares java.lang.AutoCloseable
         try (PreparedStatement stmtNode = db.getStatement(DBUtils.generateInsertSql("dependencies_id", new String[] {"project_name", "granularity", "package_name", "lines_num", "heat", "collected_date", "item_id"}));
              PreparedStatement stmtDepLink = db.getStatement(DBUtils.generateInsertSql("dependencies", new String[] {"project_name", "granularity", "source", "dest", "collected_date", "item_id"}));
              PreparedStatement stmtDepType = db.getStatement(DBUtils.generateInsertSql("dependency_type", new String[] {
                      "id", "Import_", "Contain_", "Implement_", "Extend_", "Call_", "Parameter_", "Return_", "Use_", "Create_", "Cast_", "Throw_", "ImplLink_", "Annotation_", "MixIn_", "Set_", "dep_id"}));
              PreparedStatement stmtQueryIndex = db.getStatement("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '" + db.dbName + "' AND TABLE_NAME = 'dependencies'");
-             ResultSet resultSet = stmtQueryIndex.executeQuery();
              PreparedStatement stmtPkgStat = db.getStatement("SELECT SUM(current_effective_lines), AVG(heat) FROM report WHERE project_name = ? AND collected_date = ? AND file_name REGEXP ?")) {
 
             /* Insert Nodes */
@@ -99,7 +110,8 @@ public class MySQLFormatDependencyDumper extends AbstractFormatDependencyDumper 
 
             stmtDepType.setNull(1, Types.NULL);
 
-            int dep_id = resultSet.next() ? resultSet.getInt(1) : 0;
+            Object[] resultArray = DBUtils.execResult(stmtQueryIndex, 1);
+            int dep_id = resultArray == null || resultArray[0] == null ? 0 : Integer.parseInt(resultArray[0].toString());
 
             for (DependencyPair dependencyPair : dependencyPairs) {
                 stmtDepLink.setString(3, FormatUtils.formatClassName(nodes.get(dependencyPair.getFrom()), inputDir));

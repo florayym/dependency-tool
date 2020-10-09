@@ -39,7 +39,7 @@ var objcdv = {
                 // 如果不存在，创建一个新的节点
                 if (node == null) {
                     var idx = this.node_index;
-                    this.nodesSet[nodeName] = node = { idx: idx, name: nodeName, source: 0, dest: 0, lines_num: 0 }; // NOTE changed source from 1 to 0
+                    this.nodesSet[nodeName] = node = { idx: idx, name: nodeName, source: 0, dest: 0, lines_num: 0, group: { prefix: 0, heat: 0 } }; // NOTE changed source from 1 to 0
                     this.node_index++;
                 }
                 return node;
@@ -137,7 +137,7 @@ var objcdv = {
             addName: function addName(name) {
                 this._sortedPrefixes = null;
 
-                var prefix = this._getPrefixName(name, level); // name.substring(0, 2);
+                var prefix = this._getPrefixName(name, color_level); // name.substring(0, 2);
                 if (!(prefix in this._prefixesDistr)) {
                     this._prefixesDistr[prefix] = 1;
                 } else {
@@ -147,7 +147,7 @@ var objcdv = {
 
             prefixIndexForName: function prefixIndexForName(name) {
                 var sortedPrefixes = this._getSortedPrefixes();
-                var prefix = this._getPrefixName(name, level); // name.substring(0, 2);
+                var prefix = this._getPrefixName(name, color_level); // name.substring(0, 2);
                 return _.indexOf(sortedPrefixes, prefix);
             },
 
@@ -198,11 +198,14 @@ var objcdv = {
 
     _createHeatGrouping: function _createHeatGrouping() {
         return {
-            color_scale: 255 * 2,
+            color_scale: 255 * 2 - 80,
+            red: 240,
+            blue: 55,
             computeHeatIndex: function computeHeatIndex(heat) {
+                var green_threshold = this.color_scale - this.red;
                 var heat_index = Math.round((heat_max - heat) / (heat_max - heat_min) * this.color_scale);
-                return heat_index <= 255 ? { "r": 255, "g": heat_index, "b": 0 }
-                    : { "r": this.color_scale - heat_index, "g": 255, "b": 0 };
+                return heat_index <= green_threshold ? { "r": this.red, "g": heat_index, "b": this.blue }
+                    : { "r": this.color_scale - heat_index, "g": green_threshold, "b": this.blue };
             }
         };
     },
@@ -231,7 +234,8 @@ var objcdv = {
 
         graph.updateNodes(function (node) {
             node.weight = node.source;
-            node.group = grouping == "prefix" ? prefixes.prefixIndexForName(node.name) + 1 : heat.computeHeatIndex(node.heat);
+            node.group['prefix'] = prefixes.prefixIndexForName(node.name) + 1;
+            node.group['heat'] = heat.computeHeatIndex(node.heat);
         });
 
         return graph;

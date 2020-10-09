@@ -81,8 +81,8 @@ abstract public class AbstractLangProcessor {
 	/**
 	 * The language specific file parser
 	 * 
-	 * @param fileFullPath
-	 * @return
+	 * @param fileFullPath full file path
+	 * @return abstract language file parser
 	 */
 	protected abstract FileParser createFileParser(String fileFullPath);
 
@@ -96,6 +96,7 @@ abstract public class AbstractLangProcessor {
 	private List<String> typeFilter;
 	private List<String> includePaths;
 	private static Logger logger = LoggerFactory.getLogger(AbstractLangProcessor.class);
+	public boolean logging = true;
 	
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {
 		entityRepo = new InMemoryEntityRepo();
@@ -114,12 +115,13 @@ abstract public class AbstractLangProcessor {
 	 * @param isCollectUnsolvedBindings
 	 * @param isDuckTypingDeduce
 	 */
-	public void buildDependencies(String inputDir, String[] includeDir, List<String> typeFilter, boolean callAsImpl, boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce) {
+	public void buildDependencies(String inputDir, String[] includeDir, List<String> typeFilter, boolean callAsImpl, boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce, boolean logging) {
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
 		this.typeFilter = typeFilter;
 		this.inferer.setCollectUnsolvedBindings(isCollectUnsolvedBindings);
 		this.inferer.setDuckTypingDeduce(isDuckTypingDeduce);
+		this.logging = logging;
 		logger.info("Start parsing files...");
 		parseAllFiles(); // IMP fill in entityRepo
 		markAllEntitiesScope(); // IMP ???
@@ -137,14 +139,14 @@ abstract public class AbstractLangProcessor {
 	}
 
 	private void markAllEntitiesScope() {
-		entityRepo.getFileEntities().stream().forEach(entity -> {
+		entityRepo.getFileEntities().forEach(entity -> {
 			Entity file = entity.getAncestorOfType(FileEntity.class);
 			try {
 				if (!file.getQualifiedName().startsWith(this.inputSrcPath)) {
 					entity.setInScope(false);
 				}
 			} catch (Exception e) {
-
+				e.printStackTrace();
 			}
 		});
 	}
@@ -203,7 +205,9 @@ abstract public class AbstractLangProcessor {
 	protected void parseFile(String fileFullPath) {
 		FileParser fileParser = createFileParser(fileFullPath);
 		try {
-			System.out.println("parsing " + fileFullPath + "...");
+			if (logging) {
+				System.out.println("parsing " + fileFullPath + "...");
+			}
 			fileParser.parse();
 		} catch (IOException e) {
 			e.printStackTrace();

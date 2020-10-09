@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
+import depends.extractor.ruby.RubyProcessor;
 import org.jrubyparser.ast.AliasNode;
 import org.jrubyparser.ast.ArgumentNode;
 import org.jrubyparser.ast.ArrayNode;
@@ -79,7 +80,7 @@ public class JRubyVisitor extends NoopVisitor {
 	private ExpressionUsage expressionUsage;
 
 	public JRubyVisitor(String fileFullPath, EntityRepo entityRepo, IncludedFileLocator includedFileLocator,
-			ExecutorService executorService, Inferer inferer, ParserCreator parserCreator) {
+			ExecutorService executorService, Inferer inferer, RubyProcessor parserCreator) {
 		this.context = new RubyHandlerContext(entityRepo, includedFileLocator, executorService, inferer, parserCreator);
 		expressionUsage = new ExpressionUsage(context, entityRepo, helper, inferer);
 		context.startFile(fileFullPath);

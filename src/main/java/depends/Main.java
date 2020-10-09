@@ -91,6 +91,7 @@ public class Main {
 		String outputDir = app.getOutputDir();
 		String[] outputFormat = app.getFormat();
 		String granularity = app.getGranularity();
+		boolean logging = app.isLogging();
 
 		inputDir = FileUtil.uniqFilePath(inputDir);
 		boolean supportImplLink = false;
@@ -163,7 +164,7 @@ public class Main {
 		dependencyGenerator.setFilenameRewritter(filenameWritter);
 		langProcessor.setDependencyGenerator(dependencyGenerator);
 		
-		langProcessor.buildDependencies(inputDir, includeDir,app.getTypeFilter(),supportImplLink,app.isOutputExternalDependencies(),app.isDuckTypingDeduce());
+		langProcessor.buildDependencies(inputDir, includeDir, app.getTypeFilter(), supportImplLink, app.isOutputExternalDependencies(), app.isDuckTypingDeduce(), logging);
 		
 		
 		DependencyMatrix matrix = langProcessor.getDependencies();

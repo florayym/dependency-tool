@@ -62,7 +62,7 @@ public class PomFileParser implements FileParser {
 	public void parse() throws IOException {
 		/* If file already exist, skip it */
 		Entity fileEntity = entityRepo.getEntity(fileFullPath);
-		if (fileEntity!=null && fileEntity instanceof FileEntity) {
+		if (fileEntity instanceof FileEntity) {
 			return;
 		}
 		/*parse file*/
@@ -70,7 +70,7 @@ public class PomFileParser implements FileParser {
         Lexer lexer = new XMLLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         XMLParser parser = new XMLParser(tokens);
-        PomListener bridge = new PomListener(fileFullPath, entityRepo, includePaths,parseCreator,inferer);
+        PomListener bridge = new PomListener(fileFullPath, entityRepo, includePaths, parseCreator, inferer);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.document());
 		fileEntity = entityRepo.getEntity(fileFullPath);

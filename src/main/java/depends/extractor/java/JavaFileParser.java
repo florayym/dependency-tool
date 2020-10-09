@@ -41,7 +41,7 @@ import depends.entity.repo.EntityRepo;
 import depends.relations.Inferer;
 
 
-public class JavaFileParser implements depends.extractor.FileParser{
+public class JavaFileParser implements depends.extractor.FileParser {
 	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private Inferer inferer;

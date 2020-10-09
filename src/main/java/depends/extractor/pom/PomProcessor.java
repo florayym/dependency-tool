@@ -63,16 +63,16 @@ public class PomProcessor extends AbstractLangProcessor {
 
 	@Override
 	protected FileParser createFileParser(String fileFullPath) {
-		return new PomFileParser(fileFullPath,entityRepo,includePaths(),this,inferer);
+		return new PomFileParser(fileFullPath, entityRepo, includePaths(), this, inferer);
 	}
 	
 	@Override
 	public List<String> supportedRelations() {
-		ArrayList<String> depedencyTypes = new ArrayList<>();
-		depedencyTypes.add(PomParent);
-		depedencyTypes.add(PomPlugin);
-		depedencyTypes.add(PomDependency);
-		return depedencyTypes;
+		ArrayList<String> dependencyTypes = new ArrayList<>();
+		dependencyTypes.add(PomParent);
+		dependencyTypes.add(PomPlugin);
+		dependencyTypes.add(PomDependency);
+		return dependencyTypes;
 	}			
 	
 	@Override

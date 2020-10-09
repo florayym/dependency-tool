@@ -133,5 +133,7 @@ PARAMETER DESCRIPTION:
 ```
 并于 `update.sh` 中执行命令。示例如下：
 ```shell
-$ ./run-depends.sh -j /home/test/workspaces/depends-dist-0.9.6/depends-0.9.6.jar -i /home/test/workspaces/MP_Test/ -l java -o $BASEPATH/HAWebsite/HeatAnalyzeWebsite/app/static/map/package -f js,mysql -g package -c config/config.json
+$ ./run-depends.sh -j /home/test/workspaces/depends-dist-0.9.6/depends-0.9.6.jar -i /home/test/workspaces/MP_Test/ -l
+ java -o $BASEPATH/HAWebsite/HeatAnalyzeWebsite/app/static/map/package -f js,mysql -g package -c config/config.json
+ # -l # to enable file-parse logging
 ```

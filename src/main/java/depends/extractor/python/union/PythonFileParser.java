@@ -38,7 +38,7 @@ public class PythonFileParser implements FileParser {
 	public void parse() throws IOException {
 		/** If file already exist, skip it */
 		Entity fileEntity = entityRepo.getEntity(fileFullPath);
-		if (fileEntity!=null && fileEntity instanceof FileEntity) {
+		if (fileEntity instanceof FileEntity) {
 			return;
 		}
         CharStream input = CharStreams.fromFileName(fileFullPath);
@@ -51,7 +51,7 @@ public class PythonFileParser implements FileParser {
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.file_input());
 		fileEntity = entityRepo.getEntity(fileFullPath);
-		((FileEntity)fileEntity).cacheAllExpressions();
+		((FileEntity) fileEntity).cacheAllExpressions();
 		bridge.done();
 	}
 
