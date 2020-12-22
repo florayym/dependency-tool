@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-    echo "Usage: $0 -j <path/to/depends-version.jar> -i <repo/path/> -l <java|cpp|python|kotlin|pom|ruby|xml> -o <output/path/> [-f js[,mysql|,json|,xml|,excel|,detail|,dot|,plantuml]] -g <package|file|method> [-c <path/to/config.json>] [-t <date>]"
+    echo "Usage: $0 -j <path/to/depends-version.jar> -i <repo/path/> -l <java|cpp|python|kotlin|pom|ruby|xml> -o <output/path/> [-f [js|,mysql|,json|,xml|,excel|,detail|,dot|,plantuml]] [-g <package|file|method>] [-c <path/to/config.json>] [-t <date>] [-d]"
 
     echo "PARAMETER DESCRIPTION:"
     echo "-j jar-path                                     path to depends-x.x.x.jar"
@@ -12,14 +12,15 @@ usage() {
     echo "-g package|file|method||L#                      granularity"
     echo "-c json-file                                    database configuration json"
     echo "-t date                                         analyze a specific date"
+    echo "-d                                              enable parse logging"
     1>&2; exit 1;
 }
 
-if [[ $# -lt 10 || $# -gt 17 ]]; then
+if [[ $# -lt 9 || $# -gt 18 ]]; then
     usage;
 fi
 
-while getopts ":j:i:l:o:f:g:c:t:" args; do
+while getopts ":j:i:l:o:f:g:c:t:d:" args; do
     case "${args}" in
         j)
             jarPath=${OPTARG}
@@ -66,6 +67,9 @@ while getopts ":j:i:l:o:f:g:c:t:" args; do
             fi
             date="--date ${OPTARG}"
             ;;
+        d)
+            logging="-l"
+            ;;
         *)
             usage
             ;;
@@ -74,7 +78,7 @@ done
 
 # default jar
 if [[ -z "${jarPath+x}" ]]; then
-    jarPath=$HOME/workspaces/depends/build/distribution/depends-0.9.6.jar
+    jarPath=$HOME/workspaces/depends/build/distribution/depends-1.0.0.jar
 fi
 
 depends () {
@@ -87,7 +91,7 @@ tmp_fifo=/tmp/fd1
 exec 3<>${tmp_fifo}
 rm -rf ${tmp_fifo}
 
-process_num=15
+process_num=20
 for ((i=1;i<=${process_num};i++)) do
     echo >&3
 done
@@ -102,7 +106,7 @@ for DIR in "${inputPath}/"*; do
 
         read -u3
 {
-        depends ${language} ${PROJPATH} ${PROJNAME} ${outputPath} -f ${format} -g ${granularity} ${config} ${date} # set -l to enable parse-logging
+        depends ${language} ${PROJPATH} ${PROJNAME} ${outputPath} -f ${format} -g ${granularity} ${config} ${date} ${logging}
         echo >&3
 } &
     fi
