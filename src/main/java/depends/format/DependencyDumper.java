@@ -48,11 +48,11 @@ public class DependencyDumper {
 		this.dependencyMatrix = dependencies;
 	}
 
-	public void outputResult(String inputDir, String outputFileName, String outputDir, String[] outputFormat, String dbConfigDir, String granularity) {
-        outputDeps(inputDir, outputFileName, outputDir, outputFormat, dbConfigDir, granularity);
+	public void outputResult(String inputDir, String outputFileName, String outputDir, String[] outputFormat, String dbConfigDir, String granularity, String date) {
+        outputDeps(inputDir, outputFileName, outputDir, outputFormat, dbConfigDir, granularity, date);
 	}
 
-	private final void outputDeps(String inputDir, String outputFileName, String outputDir, String[] outputFormat, String dbConfigDir, String granularity) {
+	private final void outputDeps(String inputDir, String outputFileName, String outputDir, String[] outputFormat, String dbConfigDir, String granularity, String date) {
 		@SuppressWarnings("unchecked")
 		List<String> formatList = Arrays.asList(outputFormat);
 		AbstractFormatDependencyDumper[] builders = new AbstractFormatDependencyDumper[] {
@@ -60,7 +60,7 @@ public class DependencyDumper {
 		 	new XmlFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
 		 	new JsonFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
 		 	new JavaScriptFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir, dbConfigDir),
-			new MySQLFormatDependencyDumper(dependencyMatrix, inputDir, dbConfigDir, granularity),
+			new MySQLFormatDependencyDumper(dependencyMatrix, inputDir, dbConfigDir, granularity, date),
 		 	new ExcelXlsFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
 		 	new ExcelXlsxFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),
 		 	new DotFormatDependencyDumper(dependencyMatrix, inputDir, outputFileName, outputDir),

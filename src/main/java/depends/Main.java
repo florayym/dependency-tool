@@ -86,6 +86,7 @@ public class Main {
 		String lang = app.getLang();
 		String inputDir = app.getSrc();
 		String dbConfigDir = app.getDbConfig();
+		String date = app.getDate();
 		String[] includeDir = app.getIncludes();
 		String outputFileName = app.getOutputName();
 		String outputDir = app.getOutputDir();
@@ -173,7 +174,7 @@ public class Main {
 			matrix = new MatrixLevelReducer(matrix, granularity.substring(1)).shrinkToLevel();
 		}
 		DependencyDumper output = new DependencyDumper(matrix);
-		output.outputResult(inputDir, outputFileName, outputDir, outputFormat, dbConfigDir, granularity);
+		output.outputResult(inputDir, outputFileName, outputDir, outputFormat, dbConfigDir, granularity, date);
 		if (app.isOutputExternalDependencies()) {
 			Set<UnsolvedBindings> unsolved = langProcessor.getExternalDependencies();
 	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved, app.getOutputName(), app.getOutputDir(),

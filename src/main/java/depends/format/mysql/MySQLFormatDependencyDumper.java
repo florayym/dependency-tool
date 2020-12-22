@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Map;
 
@@ -35,16 +36,18 @@ enum Type {
 public class MySQLFormatDependencyDumper extends AbstractFormatDependencyDumper {
     private DBUtils db;
     private String granularity;
+    private String date;
 
     @Override
     public String getFormatName() {
         return "mysql";
     }
 
-    public MySQLFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String dbConfigDir, String granularity) {
+    public MySQLFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String dbConfigDir, String granularity, String date) {
         super(dependencyMatrix, inputDir, "", "");
         this.db = dbConfigDir == null ? null : new DBUtils(dbConfigDir);
         this.granularity = granularity;
+        this.date = date;
     }
 
 	@Override
@@ -54,19 +57,7 @@ public class MySQLFormatDependencyDumper extends AbstractFormatDependencyDumper 
             return false;
         }
 
-        Date date = DBUtils.getDate();
-
-        // Do not add repetitive data, return false, should judge before all the program runs.
-        // try (PreparedStatement stmtCheckRepeat = db.getStatement("SELECT COUNT(*) FROM dependencies_id WHERE collected_date = '" + date.toString() + "'")) {
-        //     Object[] resultArray = DBUtils.execResult(stmtCheckRepeat, 1);
-        //     String existed = resultArray == null || resultArray[0] == null ? "0" : resultArray[0].toString();
-        //     if (!existed.equals("0")) {
-        //         return false; // Optional: delete the existed and then go on.
-        //     }
-        // } catch (SQLException e) {
-        //     e.printStackTrace();
-        // }
-
+        Date date = DBUtils.getDate(this.date);
         String projectName = FormatUtils.getProjectName(inputDir);
 
 		ArrayList<String> nodes = matrix.getNodes();
@@ -78,17 +69,17 @@ public class MySQLFormatDependencyDumper extends AbstractFormatDependencyDumper 
              PreparedStatement stmtDepType = db.getStatement(DBUtils.generateInsertSql("dependency_type", new String[] {
                      "id", "Import_", "Contain_", "Implement_", "Extend_", "Call_", "Parameter_", "Return_", "Use_", "Create_", "Cast_", "Throw_", "ImplLink_", "Annotation_", "MixIn_", "Set_", "dep_id"}));
              PreparedStatement stmtQueryIndex = db.getStatement("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '" + db.dbName + "' AND TABLE_NAME = 'dependencies'");
-             PreparedStatement stmtPkgStat = db.getStatement("SELECT SUM(current_effective_lines), AVG(heat) FROM report WHERE project_name = ? AND collected_date = ? AND file_name REGEXP ?")) {
+             PreparedStatement stmtPkgStat = db.getStatement("SELECT SUM(end_total_lines), SUM(heat) FROM project_report WHERE collected_date = ? AND project_name = ? AND file_path REGEXP ?")) {
 
             /* Insert Nodes */
             stmtNode.setString(1, projectName);
             stmtNode.setString(2, granularity);
-            stmtNode.setDate(6, date);
+            stmtNode.setDate(6, date, Calendar.getInstance());
             stmtNode.setNull(7, Types.NULL);
 
             /* Count total number of lines in a package */
-            stmtPkgStat.setString(1, projectName);
-            stmtPkgStat.setDate(2, date);
+            stmtPkgStat.setDate(1, date, Calendar.getInstance());
+            stmtPkgStat.setString(2, projectName);
 
             for (String node : nodes) {
                 String nodeName = FormatUtils.formatClassName(node, inputDir);
@@ -105,7 +96,7 @@ public class MySQLFormatDependencyDumper extends AbstractFormatDependencyDumper 
             /* Insert Links and Link Types */
             stmtDepLink.setString(1, projectName);
             stmtDepLink.setString(2, granularity);
-            stmtDepLink.setDate(5, date);
+            stmtDepLink.setDate(5, date, Calendar.getInstance());
             stmtDepLink.setNull(6, Types.NULL);
 
             stmtDepType.setNull(1, Types.NULL);

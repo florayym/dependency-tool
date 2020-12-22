@@ -126,15 +126,12 @@ svg.append("defs").selectAll("marker")
 
 var tooltip = d3
     .select(".tooltip")
-    // .select("#chart")
-    // .append("div")
-    // .attr("class", "tooltip")
     .style("background-color", "lightgrey")
     .style("border-radius", "5px")
     .style("border", "solid")
     .style("padding", "10px")
     .style("opacity", 0)
-    .style("width", "1000px")
+    .style("width", "70%")
     ;
 
 var mouseover = function (d) {

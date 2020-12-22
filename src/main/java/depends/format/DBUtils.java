@@ -25,7 +25,7 @@ public class DBUtils {
     public DBUtils(String dbConfigDir) {
         if (dbConfigDir == null) return;
         dbConfigurationReader(dbConfigDir);
-        String databaseUrl = "jdbc:mysql://" + sqlIP + ":" + sqlPort + "/" + dbName + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        String databaseUrl = "jdbc:mysql://" + sqlIP + ":" + sqlPort + "/" + dbName + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"; // useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
         try {
             Class.forName(JDBC_DRIVER);
             System.out.println("Database connection is running...");
@@ -89,7 +89,10 @@ public class DBUtils {
         }
     }
 
-    public static Date getDate() {
+    public static Date getDate(String date) {
+        if (date != null && !date.isEmpty()) {
+            return Date.valueOf(date);
+        }
         // return new Date(new java.util.Date().getTime());
         Timestamp ts = new Timestamp(new java.util.Date().getTime());
         System.out.println("Execution time: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(ts));

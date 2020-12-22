@@ -27,7 +27,7 @@ public class JavaScriptFormatDependencyDumper extends AbstractFormatDependencyDu
 
     public JavaScriptFormatDependencyDumper(DependencyMatrix dependencyMatrix, String inputDir, String outputFileName, String outputDir, String dbConfigDir) {
         super(dependencyMatrix, inputDir, outputFileName, outputDir);
-        this.db = dbConfigDir == null ? null : new DBUtils(dbConfigDir);
+        this.db = dbConfigDir == null || dbConfigDir.isEmpty() ? null : new DBUtils(dbConfigDir);
     }
 
 	@Override
@@ -38,22 +38,27 @@ public class JavaScriptFormatDependencyDumper extends AbstractFormatDependencyDu
         /* Dump in local js file */
         File file = new File(composeFilename() + ".js");
         try (BufferedWriter br = new BufferedWriter(new FileWriter(file));
-             PreparedStatement stmtPkgStat = db.getStatement(
-                     "SELECT SUM(current_effective_lines), AVG(heat) FROM report WHERE project_name = ? AND collected_date = ? AND file_name REGEXP ?")) {
-            br.write("var dependencies = {\n\tnodes: [\n");
-            stmtPkgStat.setString(1, FormatUtils.getProjectName(inputDir));
-            stmtPkgStat.setDate(2, DBUtils.getDate());
+             PreparedStatement stmtPkgStat = db == null ? null
+                     : db.getStatement("SELECT SUM(end_total_lines), SUM(heat) FROM project_report " +
+                                        "WHERE collected_date = ? AND project_name = ? AND file_path REGEXP ?")) {
+            if (db != null) {
+                br.write("var dependencies = {\n\tnodes: [\n");
+                stmtPkgStat.setDate(1, DBUtils.getDate(null));
+                stmtPkgStat.setString(2, FormatUtils.getProjectName(inputDir));
 
-            for (String node: nodes) {
-                String nodeName = FormatUtils.formatClassName(node, inputDir);
-                stmtPkgStat.setString(3, ".*" + nodeName.replaceAll("\\.", "/") + "/?[a-zA-Z0-9]*(.java)");
-                Object[] resultArray = DBUtils.execResult(stmtPkgStat, 2);
-                String loc = resultArray == null || resultArray[0] == null ? "0" : resultArray[0].toString();
-                String heat = resultArray == null || resultArray[1] == null ? "0.0" : resultArray[1].toString();
-                br.write("\t\t{\"name\": \"" + nodeName + "\", \"loc\": " + loc + ", \"heat\": " + heat + "},\n");
+                for (String node: nodes) {
+                    String nodeName = FormatUtils.formatClassName(node, inputDir);
+                    stmtPkgStat.setString(3, ".*" + nodeName.replaceAll("\\.", "/") + "/?[a-zA-Z0-9]*(.java)");
+                    Object[] resultArray = DBUtils.execResult(stmtPkgStat, 2);
+                    String loc = resultArray == null || resultArray[0] == null ? "0" : resultArray[0].toString();
+                    String heat = resultArray == null || resultArray[1] == null ? "0.0" : resultArray[1].toString();
+                    br.write("\t\t{\"name\": \"" + nodeName + "\", \"loc\": " + loc + ", \"heat\": " + heat + "},\n");
+                }
+                br.write("\t],\n");
+                br.write("\tlinks: [\n");
+            } else {
+                br.write("var dependencies = {\n\tlinks: [\n");
             }
-            br.write("\t],\n");
-            br.write("\tlinks: [\n");
             for (DependencyPair dependencyPair : dependencyPairs) {
                 String src = FormatUtils.formatClassName(nodes.get(dependencyPair.getFrom()), inputDir);
                 String dest = FormatUtils.formatClassName(nodes.get(dependencyPair.getTo()), inputDir);
