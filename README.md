@@ -1,4 +1,4 @@
-# 程序修改说明
+# README
 
 ## 项目构建与依赖
 ### Gradle 构建
@@ -38,7 +38,7 @@
 </details>
 
 ### ANTLR
-需从 [官网](https://www.antlr.org/download.html) 下载 `antlr-4.8-complete.jar`，执行
+需从 [官网](https://www.antlr.org/download.html) 下载 `antlr-4.8-complete.jar` ，执行
 ```shell
 java -jar antlr-4.8-complete.jar yourLanguageGrammar.g4 -visitor
 ```
@@ -51,12 +51,12 @@ java -jar antlr-4.8-complete.jar yourLanguageGrammar.g4 -visitor
 1. 添加 `--db` 参数，设置数据库配置文件的路径，例如“ `config.json` ”。
 1. 添加 `--date` 参数，设定检索数据库中特定日期的数据进行分析，例如“ `2020-08-20` ”。
 1. 添加 `-l` 参数，打印文件解析日志。
-1. 扩展 `-g, --granularity`，选择以文件（类）、包、方法或指定层数为粒度分析依赖。
+1. 扩展 `-g, --granularity` ，选择以文件（类）、包、方法或指定层数为粒度分析依赖。
 1. 扩展 `-f, --format` 指定输出分析结果的文件格式为 JS 或 Json 等格式。
 
 ## 输出文件格式
 1. 添加 `src\main\java\depends\format\DBUtils.java` 文件，提供MySQL数据库配置、操作的各种命令。
-1. 添加 `src\main\java\depends\format\javascript\JavaScriptFormatDependencyDumper.java` 文件，继承自抽象类 `AbstractFormatDependencyDumper`，实现分析结果输出为本地JS文件，同时持久化存储至数据库中。
+1. 添加 `src\main\java\depends\format\javascript\JavaScriptFormatDependencyDumper.java` 文件，继承自抽象类 `AbstractFormatDependencyDumper` ，实现分析结果输出为本地JS文件，同时持久化存储至数据库中。
 与原项目不同， `JavaScriptFormatDependencyDumper` 生成的 `analyzed.js` 中 `dependencies` 对象结构包括起始点、终点、具有的依赖关系的类型及每一类型的出现次数，示例如下：
     ```js
     var dependencies = {
@@ -73,7 +73,7 @@ java -jar antlr-4.8-complete.jar yourLanguageGrammar.g4 -visitor
 1. 修改 `src\main\java\depends\format` 目录下的多个文件，以传入数据库配置地址。
 
 ## 分析粒度
-添加 `src\main\java\depends\generator\PackageDependencyGenerator.java`，筛选符合 `entity instanceof PackageEntity` 条件的实体，作为依赖分析的对象。depends 项目将分析对象抽象为 `Entity` 类，这个抽象类是所有实体，例如 `FileEntity` （类粒度）和 `PackageEntity` （包粒度）的父类。每一种粒度的依赖关系生成器仅接收相应粒度的 Entity 作为节点，刻画依赖关系。而 [Apk Dependency Graph](https://github.com/alexzaitsev/apk-dependency-graph) 项目的粒度识别则是基于类路径字符串解析，从中截取一定层级的包路径，将其记录为一个节点。
+添加 `src\main\java\depends\generator\PackageDependencyGenerator.java` ，筛选符合 `entity instanceof PackageEntity` 条件的实体，作为依赖分析的对象。depends 项目将分析对象抽象为 `Entity` 类，这个抽象类是所有实体，例如 `FileEntity` （类粒度）和 `PackageEntity` （包粒度）的父类。每一种粒度的依赖关系生成器仅接收相应粒度的 Entity 作为节点，刻画依赖关系。而 [Apk Dependency Graph](https://github.com/alexzaitsev/apk-dependency-graph) 项目的粒度识别则是基于类路径字符串解析，从中截取一定层级的包路径，将其记录为一个节点。
 
 ## 可视化模块
 ### gui 模块导入
@@ -124,12 +124,12 @@ gui
 1. `distributions` ：添加该插件，可执行其中的 `distZip` 任务一步打包并构建分布压缩包 `depends-dist-x.x.x.zip`
 1. `unpackFiles` ：解压缩包
 
-## 项目批量分析
+## 批量项目分析
 
 添加项目根目录下的 `depends.sh` ，用于在计算云上执行对指定目录下的所有项目的依赖分析。
 
 ```shell
-Usage: $0 -j <path/to/depends-version.jar> -i <repo/path/> -l <java|cpp|python|kotlin|pom|ruby|xml> -o <output/path/> [-f js[,mysql|,json|,xml|,excel|,detail|,dot|,plantuml]] -g <package|file|method> [-c <path/to/config.json>] [-t <date>]
+Usage: $0 -j <path/to/depends-version.jar> -i <repo/path/> -l <java|cpp|python|kotlin|pom|ruby|xml> -o <output/path/> [-f [js|,mysql|,json|,xml|,excel|,detail|,dot|,plantuml]] [-g <package|file|method>] [-c <path/to/config.json>] [-t <date>] [-d]
 
 PARAMETER DESCRIPTION:
     -j jar-path                                     path to depends-x.x.x.jar
@@ -144,7 +144,7 @@ PARAMETER DESCRIPTION:
 ```
 并于 `update.sh` 中执行命令。示例如下：
 ```shell
-$ ./depends.sh -i /path/to/projects/ -l java -o /output/path/ -f js,mysql -g package -c config/config.json # -d for enabling parse logging
+$ ./depends.sh -i /path/to/projects/ -l java -o /output/path/ -f js,mysql -g package -c config/config.json #-d for enabling parse logging
 ```
 
 ## 单个项目分析
