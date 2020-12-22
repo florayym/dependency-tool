@@ -2,7 +2,10 @@
 
 ## 项目构建与依赖
 ### Gradle 构建
-将 maven 构建更改为 gradle 构建，根据原项目的 POM 文件生成对应依赖，下载对应依赖包存于 `libs` 目录下。项目依赖及其版本如下：
+将 maven 构建更改为 gradle 构建，根据原项目的 POM 文件生成对应依赖，下载对应依赖包存于 `libs` 目录下。
+
+<details><summary>具体的项目依赖及其版本</summary>
+
 - antlr4-maven-plugin-4.7.2.jar
 - antlr4-runtime-4.8.jar
 - commons-io-2.6.jar
@@ -32,6 +35,8 @@
 - jrubyparser-0.5.5-SNAPSHOT.jar
 - yydebug.jar
 
+</details>
+
 ### ANTLR
 需从 [官网](https://www.antlr.org/download.html) 下载 `antlr-4.8-complete.jar`，执行
 ```shell
@@ -43,20 +48,26 @@ java -jar antlr-4.8-complete.jar yourLanguageGrammar.g4 -visitor
 本项目还依赖于原作者的 [utils](https://github.com/multilang-depends/utils) 和 [jruby-parser](https://github.com/jruby/jruby-parser) 两个项目，需将其置于 `src\main\java` 目录中。
 
 ## 输入参数
-在 `src\main\java\depends\DependsCommand.java` 中添加 `--db` 参数，设置数据库配置文件的路径，例如 `"config.json"` 。并且，修改了
-1. `-g, --granularity`，选择以文件（类）、包、方法或指定层数为粒度分析依赖。
-1. `-f, --format` 指定输出分析结果的文件格式为 JS 或 Json 等格式。
+1. 添加 `--db` 参数，设置数据库配置文件的路径，例如“ `config.json` ”。
+1. 添加 `--date` 参数，设定检索数据库中特定日期的数据进行分析，例如“ `2020-08-20` ”。
+1. 添加 `-l` 参数，打印文件解析日志。
+1. 扩展 `-g, --granularity`，选择以文件（类）、包、方法或指定层数为粒度分析依赖。
+1. 扩展 `-f, --format` 指定输出分析结果的文件格式为 JS 或 Json 等格式。
 
 ## 输出文件格式
 1. 添加 `src\main\java\depends\format\DBUtils.java` 文件，提供MySQL数据库配置、操作的各种命令。
 1. 添加 `src\main\java\depends\format\javascript\JavaScriptFormatDependencyDumper.java` 文件，继承自抽象类 `AbstractFormatDependencyDumper`，实现分析结果输出为本地JS文件，同时持久化存储至数据库中。
 与原项目不同， `JavaScriptFormatDependencyDumper` 生成的 `analyzed.js` 中 `dependencies` 对象结构包括起始点、终点、具有的依赖关系的类型及每一类型的出现次数，示例如下：
     ```js
-    var dependencies = {links:[
-        {"source": "com.huawei.screenrecorder", "dest": "com.huawei.screenrecorder.activities", "values": {"Call": 2.0, "Import": 2.0, "Use": 3.0, "Create": 2.0, "Contain": 1.0}},
-        {"source": "com.huawei.screenrecorder", "dest": "com.huawei.screenrecorder.vrscreenrecorder", "values": {"Call": 15.0, "Import": 6.0, "Use": 23.0}},
-        {"source": "com.huawei.screenrecorder", "dest": "com.huawei.screenrecorder.util", "values": {"Call": 460.0, "Import": 83.0, "Use": 589.0, "Contain": 11.0}},
-    ]};
+    var dependencies = {
+        nodes: [
+            {"name": "com.module.name1", "loc": 0, "heat": 0.0},
+            {"name": "com.module.name2", "loc": 0, "heat": 0.0},
+        ],
+        links: [
+            {"source": "com.module.name1", "dest": "com.module.name2", "values": {"Import": 1.0, "Use": 6.0}},
+        ]
+    };
     ```
 1. 在 `src\main\java\depends\format\AbstractFormatDependencyDumper.java` 中定义并初始化参数 `protected DBUtils db`。当设定为数据库存储模式时，进行数据库连接操作。
 1. 修改 `src\main\java\depends\format` 目录下的多个文件，以传入数据库配置地址。
@@ -80,20 +91,18 @@ gui
 ```
 
 ### 分组着色策略
-修改 `parse-compiled.js` ，添加 `level` 参数，指定寻找分组前缀时所依据的目录深度，最小层数为 1 ，并实现函数
-```js
-_getPrefixName: function _getPrefixName(name, level) {
 
-    level = level < 1 ? 1 : level;
+1. 模块名称前缀
 
-    var prefix = name.split(/[\/\.]/g);
-    return prefix[Math.max(prefix.length - level, 0)];
-}
-```
-其中，使用正则表达式适配以 `/` 或 `.` 作为类或包路径分隔符的节点名称。最后，调用该函数生成分组前缀
-```js
-var prefix = this._getPrefixName(name, level);
-```
+    修改 `parse-compiled.js` ，添加 `level` 参数，指定寻找分组前缀时所依据的目录深度，最小层数为 1 ，并实现 `_getPrefixName(name, level)` 方法获取前缀：
+    ```js
+        var prefix = name.split(/[\/\.]/g);
+    ```
+    其中，使用正则表达式适配以 `/` 或 `.` 作为类或包路径分隔符的节点名称。
+
+1. 模块修改频率
+
+    修改 `parse-compiled.js` ，添加 `_createHeatGrouping` 方法，根据当前粒度下模块的被修改的频率与幅度（ heat ）大小，使用 RGB 进行调色。
 
 ## 数据库配置添加
 在项目根目录下添加 `config.json` 文件，用于添加数据库配置。结构如下：
@@ -115,12 +124,12 @@ var prefix = this._getPrefixName(name, level);
 1. `distributions` ：添加该插件，可执行其中的 `distZip` 任务一步打包并构建分布压缩包 `depends-dist-x.x.x.zip`
 1. `unpackFiles` ：解压缩包
 
-## 批量运行
+## 项目批量分析
 
-添加项目根目录下的 `run-depends.sh` ，用于在计算云上执行对指定目录下的所有项目的依赖分析。
+添加项目根目录下的 `depends.sh` ，用于在计算云上执行对指定目录下的所有项目的依赖分析。
 
 ```shell
-Usage: $0 -j <path/to/depends-version.jar> -i <repo/path/> -l <java|cpp|python|kotlin|pom|ruby|xml> -o <output/path/> [-f js[,mysql|,json|,xml|,excel|,detail|,dot|,plantuml]] -g <package|file|method> [-c <path/to/config.json>]
+Usage: $0 -j <path/to/depends-version.jar> -i <repo/path/> -l <java|cpp|python|kotlin|pom|ruby|xml> -o <output/path/> [-f js[,mysql|,json|,xml|,excel|,detail|,dot|,plantuml]] -g <package|file|method> [-c <path/to/config.json>] [-t <date>]
 
 PARAMETER DESCRIPTION:
     -j jar-path                                     path to depends-x.x.x.jar
@@ -130,16 +139,16 @@ PARAMETER DESCRIPTION:
     -f js|,json|,xml|,excel|,detail|,dot|,plantuml  output file format
     -g package|file|method||L#                      granularity
     -c json-file                                    database configuration json
+    -t date                                         analyze a specific date
+    -d                                              enable parsing logging
 ```
 并于 `update.sh` 中执行命令。示例如下：
 ```shell
-$ ./run-depends.sh -j /home/test/workspaces/depends-dist-0.9.6/depends-0.9.6.jar -i /home/test/workspaces/MP_Test/ -l
- java -o $BASEPATH/HAWebsite/HeatAnalyzeWebsite/app/static/map/package -f js,mysql -g package -c config/config.json
- # -l # to enable file-parse logging
+$ ./depends.sh -i /path/to/projects/ -l java -o /output/path/ -f js,mysql -g package -c config/config.json # -d for enabling parse logging
 ```
 
-## 单独运行
+## 单个项目分析
 
 ```shell
-java -jar /home/test/workspaces/depends-dist-0.9.6/depends-0.9.6.jar java proj_path analyzed -d output-path  -f js -g granularity
+java -jar /path/to/depends-1.0.0.jar java /path/to/project/ analyzed -d /output/path/ -f js -g granularity -l
 ```
