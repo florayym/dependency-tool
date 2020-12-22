@@ -1,4 +1,6 @@
-package depends.extractor.java;// Generated from C:/Users/y50016379/DevEcoStudioProjects/depends/src/main/antlr4/depends/extractor/java\JavaParser.g4 by ANTLR 4.8
+package depends.extractor.java;
+
+// Generated from C:/Users/y50016379/DevEcoStudioProjects/depends/src/main/antlr4/depends/extractor/java\JavaParser.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;

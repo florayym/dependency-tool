@@ -24,18 +24,17 @@ SOFTWARE.
 
 package depends.extractor.ruby;
 
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-
 import depends.entity.Entity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.HandlerContext;
-import depends.extractor.ParserCreator;
 import depends.importtypes.FileImport;
 import depends.relations.Inferer;
 import multilang.depends.util.file.FileUtil;
+
+import java.util.Collection;
+import java.util.concurrent.ExecutorService;
 
 public class RubyHandlerContext extends HandlerContext {
 
@@ -50,9 +49,9 @@ public class RubyHandlerContext extends HandlerContext {
 		this.parserCreator = parserCreator;
 	}
 	
-	public Entity foundNamespace(String namespaceName) {
+	public Entity foundNamespace(String namespaceName, Integer startLine) {
 		Entity parentEntity = currentFile();
-		if (latestValidContainer()!=null) 
+		if (latestValidContainer() != null)
 			parentEntity = latestValidContainer();
 		PackageEntity pkgEntity = new PackageEntity(namespaceName, parentEntity, idGenerator.generateId());
 		entityRepo.add(pkgEntity);
@@ -60,14 +59,14 @@ public class RubyHandlerContext extends HandlerContext {
 		return pkgEntity;
 	}
 
-	public void processSpecialFuncCall(String methodName, Collection<String> params) {
+	public void processSpecialFuncCall(String methodName, Collection<String> params, Integer startLine) {
 		// Handle Import relation
-		if (methodName.equals("require") || methodName.equals("require_relative")) { 
-			for (String importedFilename:params) {
+		if (methodName.equals("require") || methodName.equals("require_relative")) {
+			for (String importedFilename : params) {
 				if (!importedFilename.endsWith(".rb")) importedFilename = importedFilename + ".rb";
 				String dir = FileUtil.getLocatedDir(currentFile().getRawName().uniqName());
-				String inclFileName = includedFileLocator.uniqFileName(dir,importedFilename);
-				if (inclFileName==null) {
+				String inclFileName = includedFileLocator.uniqFileName(dir, importedFilename);
+				if (inclFileName == null) {
 					System.err.println("Warning: cannot found included file " + importedFilename );
 					continue;
 				}
@@ -85,21 +84,21 @@ public class RubyHandlerContext extends HandlerContext {
 		}
 		// Handle Extend relation
 		else if (methodName.equals("extend")) {
-			for (String moduleName:params) {
+			for (String moduleName : params) {
 				foundExtends(moduleName);
 			}
 		}
 		// Handle mixin relation
 		else if (methodName.equals("include")) {
-			for (String moduleName:params) {
+			for (String moduleName : params) {
 				foundMixin(moduleName);
 			}
 		}
 		// attribute methods
-		else if (methodName.equals("attr_accessor")||methodName.equals("attr_writer")||methodName.equals("attr_reader")) {
-			for (String name:params) {
+		else if (methodName.equals("attr_accessor") || methodName.equals("attr_writer") || methodName.equals("attr_reader")) {
+			for (String name : params) {
 				name = name.replace(":", ""); //remove symbol
-				foundMethodDeclarator(name);
+				foundMethodDeclarator(name, startLine);
 			}
 		} 
 	}
